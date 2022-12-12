@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const BackButton = () => (
   <FAB
