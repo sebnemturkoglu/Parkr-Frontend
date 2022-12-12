@@ -4,8 +4,8 @@ import { FAB } from 'react-native-paper';
 
 const BackButton = () => (
   <FAB
-  size='small'
-color='#fff'
+   size='small'
+    color='#fff'
     icon="keyboard-backspace"
     style={styles.fab}
     onPress={() => console.log('Pressed')}
