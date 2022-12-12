@@ -5,6 +5,7 @@ import { darkgrey, lime } from "../constants/colors";
 import ParkCard from "../components/ParkCard";
 import { parkingdata as data } from "../constants/dummyData";
 import { FAB } from "react-native-paper";
+import { mapViewScreenName } from "../constants/screenNames";
 
 export default function MapScreen({ navigation }) {
   return (
@@ -37,7 +38,7 @@ export default function MapScreen({ navigation }) {
           color={darkgrey}
           label="Map View"
           style={styles.fab}
-          onPress={() => console.log("Pressed")}
+          onPress={() => navigation.navigate(mapViewScreenName)}
         />
           </View>
     </View>

@@ -65,7 +65,11 @@ export const parkingdata = [
               range: "10+ Hour",
               fare: "50₺"
           },
-      ]
+      ],
+      coordinates: {
+        lang: 1,
+        lat: 2,
+      }
     },
     {
       id: 3,
@@ -96,7 +100,11 @@ export const parkingdata = [
               range: "10+ Hour",
               fare: "50₺"
           },
-      ]
+      ],
+      coordinates: {
+        lang: 1,
+        lat: 2,
+      }
     },
     {
       id: 4,
@@ -127,6 +135,10 @@ export const parkingdata = [
               range: "10+ Hour",
               fare: "50₺"
           },
-      ]
+      ],
+      coordinates: {
+        lang: 1,
+        lat: 2,
+      }
     },
   ];

@@ -2,13 +2,13 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 
-const BackButton = () => (
+const BackButton = (props) => (
   <FAB
    size='small'
     color='#fff'
     icon="keyboard-backspace"
     style={styles.fab}
-    onPress={() => console.log('Pressed')}
+    onPress={props.onClick}
   />
 );
 

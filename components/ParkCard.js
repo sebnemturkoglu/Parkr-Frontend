@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
-import { lime, lime60, white } from "../constants/colors";
+import { darkgrey, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const ParkCard = (props) => (
@@ -40,6 +40,8 @@ styles = StyleSheet.create({
     height: 125,
     justifyContent: "flex-start",
     flexDirection: "row",
+    backgroundColor: darkgrey,
+    borderRadius: 26,
   },
   headerGroup: {
     flexDirection: "row",

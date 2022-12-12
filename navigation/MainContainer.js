@@ -3,19 +3,15 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { darkgrey, white } from '../constants/colors';
+import { homeScreenName, profileScreenName, mapScreenName, ticketsScreenName } from "../constants/screenNames";
 
 
 // screens
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import MapScreen from "../screens/MapScreen";
+import MapStack from "./MapStack";
 import TicketsScreen from "../screens/TicketsScreen";
-
-// screen names
-const homeScreenName = "Home";
-const profileScreenName = "Profile";
-const ticketsScreenName = "Tickets";
-const mapScreenName = "Map";
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +46,7 @@ export default function MainContainer() {
         })}
       >
         <Tab.Screen name={homeScreenName} component={HomeScreen} />
-        <Tab.Screen name={mapScreenName} component={MapScreen} />
+        <Tab.Screen name={mapScreenName} component={MapStack} />
         <Tab.Screen name={ticketsScreenName} component={TicketsScreen} />
         <Tab.Screen name={profileScreenName} component={ProfileScreen} />
       </Tab.Navigator>

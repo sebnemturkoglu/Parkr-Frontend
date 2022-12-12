@@ -1,9 +1,11 @@
 import * as React from 'react';
 import Map from '../components/Map';
-import { StyleSheet, View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Animated } from "react-native";
+import { StyleSheet, View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import SearchBar from '../components/SearchBar';
 import BackButton from '../components/BackButton';
 import ParkCard from '../components/ParkCard';
+import { parkingdata as data } from "../constants/dummyData";
+import { darkgrey } from '../constants/colors';
 
 const DismissKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -11,7 +13,11 @@ const DismissKeyboard = ({ children }) => (
   </TouchableWithoutFeedback>
 );
 
-const MapSearch = () => {
+const MapViewScreen = ({ navigation }) => {
+
+  const onBackButtonClick = () => {
+    navigation.goBack();
+  }
 
   return (
     <DismissKeyboard>
@@ -20,13 +26,21 @@ const MapSearch = () => {
     enabled>
     <View style={styles.container}>
       <Map />
-      <View style={styles.searchbar}>
+      <View style = {styles.cardContainer}>
+      <ParkCard
+                  image={data[0].image}
+                  name={data[0].name}
+                  capacity={data[0].capacity}
+                  occupancy={data[0].occupancy}
+                  rating={data[0].rating}
+                  lowestfare={data[0].fares[0].fare}
+                  distance={data[0].distance}
+                />
+      </View>
+      <View style={styles.searchbar} >
         <SearchBar />
       </View>
-      <BackButton />
-      {/* <View style = {styles.cardContainer}>
-      <ParkCard />
-      </View> */}
+      <BackButton onClick={onBackButtonClick} />
     </View>
     </KeyboardAvoidingView>
     </DismissKeyboard>
@@ -43,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbar: {
-    marginVertical: 30,
+    marginVertical: 20,
     marginHorizontal: 15,
   },
   scrollView: {
@@ -54,9 +68,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   cardContainer: {
+    position: "absolute",
     padding: 10,
-    height: '15%'
+    height: '15%',
+    bottom: 140
   }
 });
 
-export default MapSearch;
+export default MapViewScreen;
