@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
-import { darkgrey, darkgrey60, lime, lime60, white } from "../constants/colors";
+import {  darkgrey60, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Map from "./Map";
 
