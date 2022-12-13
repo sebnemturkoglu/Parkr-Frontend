@@ -1,5 +1,4 @@
 import React from "react";
-import Map from "./Map";
 import { Marker } from 'react-native-maps';
 
 const MapMarkers = (props) => (

@@ -1,17 +1,15 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import BackButton from "../components/BackButton";
 import Map from "../components/Map";
 import { darkgrey, white, lime, lime60 } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { FAB } from "react-native-paper";
+import { mapDirecrtionsScreenName } from "../constants/screenNames";
 
 export default function PlaceDetailsScreen({ navigation, route }) {
   const onBackButtonClick = () => {
     navigation.goBack();
   };
-
-  console.log(route.params.data);
 
   return (
     <View style={styles.container}>
@@ -59,7 +57,7 @@ export default function PlaceDetailsScreen({ navigation, route }) {
           color={darkgrey}
           label="Navigate"
           style={styles.fab}
-          //   onPress={() => navigation.navigate(mapViewScreenName)}
+            onPress={() => navigation.navigate(mapDirecrtionsScreenName)}
         />
       </View>
     </View>
