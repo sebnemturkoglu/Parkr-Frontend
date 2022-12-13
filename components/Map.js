@@ -24,7 +24,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
   }
 })
 
-export default function Map() {
+export default function Map(props) {
 
   // Define position state: {latitude: number, longitude: number}
   const [position, setPosition] = useState(null)
@@ -121,6 +121,7 @@ export default function Map() {
   return (
     <View style={styles.container}>
       <MapView
+      scrollEnabled={props.scrollDisabled ? false : true}
         region={
           !position
             ? {

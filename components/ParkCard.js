@@ -1,17 +1,18 @@
 import * as React from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
+import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import { darkgrey, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const ParkCard = (props) => (
+  <TouchableOpacity
+  activeOpacity={0.7}
+  onPress={props.onPress}>
   <View style={styles.container}>
     <View style={styles.textGroup}>
       <View style={styles.infoGroup} >
         <View style={styles.headerGroup}>
-          {/* <Text > */}
           <Text style={styles.textHeader}>{props.name}</Text>
           <Text style={styles.textBody}>{props.distance}</Text>
-          {/* </Text> */}
         </View>
         <Text style={styles.textBody}>{props.rating}/5 points</Text>
       </View>
@@ -32,6 +33,7 @@ const ParkCard = (props) => (
       <Image style={styles.image} source={props.image} />
     </View>
   </View>
+  </TouchableOpacity>
 );
 
 styles = StyleSheet.create({
