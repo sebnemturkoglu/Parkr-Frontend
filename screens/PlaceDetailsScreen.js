@@ -11,6 +11,8 @@ export default function PlaceDetailsScreen({ navigation, route }) {
     navigation.goBack();
   };
 
+  id = 0;
+
   return (
     <View style={styles.container}>
       <FAB
@@ -22,7 +24,7 @@ export default function PlaceDetailsScreen({ navigation, route }) {
         onPress={onBackButtonClick}
       />
       <View style={styles.mapContainer}>
-        <Map scrollDisabled={true} />
+        <Map scrollDisabled={true} fixedMarker={true} marker={route.params.data.coordinates} />
       </View>
       <Text style={styles.header}>{route.params.data.name}</Text>
       <Text style={styles.ratingText}>{route.params.data.rating}/5 points</Text>
@@ -43,8 +45,9 @@ export default function PlaceDetailsScreen({ navigation, route }) {
       <View style={styles.faresGroup}>
         <Text style={styles.faresHeader}>Fares</Text>
         {route.params.data.fares.map((item) => {
+          id++;
           return (
-            <View style={styles.fareLineGroup}>
+            <View style={styles.fareLineGroup} key={id} > 
               <Text style={styles.textFares}>{item.range}</Text>
               <Text style={styles.textFares}>{item.fare}</Text>
             </View>

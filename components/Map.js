@@ -117,13 +117,20 @@ export default function Map(props) {
       console.log("Location tacking stopped");
     }
   };
-
+ 
   return (
     <View style={styles.container}>
       <MapView
         scrollEnabled={props.scrollDisabled ? false : true}
         region={
-          !position
+          props.fixedMarker
+          ? {
+                latitude: props.marker.latitude,
+                longitude: props.marker.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+          }
+          : (!position
             ? {
                 latitude: 74,
                 longitude: 18,
@@ -135,11 +142,15 @@ export default function Map(props) {
                 longitude: position.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
-              }
+              })
         }
         style={styles.map}
       >
-        <MapMarkers position={position} />
+        {
+          props.fixedMarker
+          ? <MapMarkers position={props.marker} />
+          : <MapMarkers position={position} />
+        }
       </MapView>
     </View>
   );

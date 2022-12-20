@@ -1,13 +1,15 @@
 import * as React from "react";
-import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import {  darkgrey60, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Map from "./Map";
 
-const PlaceCard = (props) => (
-  <TouchableOpacity activeOpacity={0.7} onPress={props.onPress}>
+export default function ParkingPlaceCard( props ) {
+
+  return(
+    <TouchableOpacity activeOpacity={0.7} onPress={props.onPress}>
     <View style={styles.container}>
-      <View style={styles.textGroup}>
+      <View style={styles.textG}>
         <View style={styles.headerGroup}>
           <View style={styles.headerGroupLeft}>
             <Text style={styles.textHeader}>{props.name}</Text>
@@ -20,15 +22,17 @@ const PlaceCard = (props) => (
         <Text style={styles.textBody}>{props.rating}/5 points</Text>
       </View>
       <View style={styles.mapContainer}>
-        <Map scrollDisabled={true} />
+        <Map scrollDisabled={true} fixedMarker={true} marker={props.coordinates} />
       </View>
     </View>
   </TouchableOpacity>
-);
+  )
+}
 
-styles = StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
-    width: 260,
+    width: "95%",
     height: 160,
     backgroundColor: darkgrey60,
     borderRadius: 26,
@@ -45,7 +49,7 @@ styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
   },
-  textGroup: {
+  textG: {
     width: "90%"
   },
   textHeader: {
@@ -68,5 +72,3 @@ styles = StyleSheet.create({
     marginVertical: 10,
   },
 });
-
-export default PlaceCard;

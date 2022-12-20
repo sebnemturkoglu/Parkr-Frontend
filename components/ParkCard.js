@@ -3,8 +3,10 @@ import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import { darkgrey, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const ParkCard = (props) => (
-  <TouchableOpacity
+export default function ParkCard (props) {
+
+  return(
+    <TouchableOpacity
   activeOpacity={0.7}
   onPress={props.onPress}>
   <View style={styles.container}>
@@ -34,9 +36,10 @@ const ParkCard = (props) => (
     </View>
   </View>
   </TouchableOpacity>
-);
+  )
+}
 
-styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: 125,
@@ -96,5 +99,3 @@ styles = StyleSheet.create({
     marginRight: 6,
   },
 });
-
-export default ParkCard;

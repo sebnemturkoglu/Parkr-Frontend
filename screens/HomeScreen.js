@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
 import { darkgrey, lime } from "../constants/colors";
 import { parkingdata as data } from "../constants/dummyData";
-import PlaceCard from "../components/PlaceCard";
+import ParkingPlaceCard from "../components/ParkingPlaceCard";
 
 export default function HomeScreen({ navigation }) {
   return (
@@ -16,9 +16,10 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.subheader} >Nearby Places</Text>
         <ScrollView horizontal={true}>
           {data.map((item) => {
+            console.log(item.coordinates);
             return (
-              <View style={styles.cardContainer}>
-                <PlaceCard
+              <View style={styles.cardContainer} key={item.id} >
+                <ParkingPlaceCard
                   image={item.image}
                   name={item.name}
                   capacity={item.capacity}
@@ -26,6 +27,7 @@ export default function HomeScreen({ navigation }) {
                   rating={item.rating}
                   lowestfare={item.fares[0].fare}
                   distance={item.distance}
+                  coordinates={item.coordinates}
                 />
               </View>
             );
@@ -37,8 +39,8 @@ export default function HomeScreen({ navigation }) {
         <ScrollView horizontal={true}>
           {data.map((item) => {
             return (
-              <View style={styles.cardContainer}>
-                <PlaceCard
+              <View style={styles.cardContainer} key={item.id} >
+                <ParkingPlaceCard
                   image={item.image}
                   name={item.name}
                   capacity={item.capacity}
@@ -46,6 +48,7 @@ export default function HomeScreen({ navigation }) {
                   rating={item.rating}
                   lowestfare={item.fares[0].fare}
                   distance={item.distance}
+                  coordinates={item.coordinates}
                 />
               </View>
             );

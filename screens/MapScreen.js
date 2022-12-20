@@ -16,7 +16,7 @@ export default function MapScreen({ navigation }) {
         <ScrollView>
           {data.map((item) => {
             return (
-              <View style={styles.cardContainer}>
+              <View style={styles.cardContainer} key={item.id} >
                 <ParkCard
                   image={item.image}
                   name={item.name}

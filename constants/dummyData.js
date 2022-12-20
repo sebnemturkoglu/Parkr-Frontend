@@ -32,8 +32,8 @@ export const parkingdata = [
           },
       ],
       coordinates: {
-        lang: 1,
-        lat: 2,
+        longitude: 32.757040,
+        latitude: 39.879247,
       }
     },
     {
@@ -67,8 +67,8 @@ export const parkingdata = [
           },
       ],
       coordinates: {
-        lang: 1,
-        lat: 2,
+        longitude: 32.751922,
+        latitude: 39.877831,
       }
     },
     {
@@ -102,8 +102,8 @@ export const parkingdata = [
           },
       ],
       coordinates: {
-        lang: 1,
-        lat: 2,
+        longitude: 32.756515,
+        latitude: 39.872660,
       }
     },
     {
@@ -137,8 +137,8 @@ export const parkingdata = [
           },
       ],
       coordinates: {
-        lang: 1,
-        lat: 2,
+        longitude: 32.752100,
+        latitude: 39.870585,
       }
     },
   ];
