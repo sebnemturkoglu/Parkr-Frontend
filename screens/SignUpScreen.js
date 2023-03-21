@@ -4,60 +4,95 @@ import { darkgrey, darkgrey40, lime60, white, lime } from "../constants/colors";
 import logo from "../assets/logo.png";
 import { TextInput } from "react-native-paper";
 
-const SignUpPage = (props) => (
-  <View style={styles.container}>
-    <View style={styles.logoContainer}>
-      <Image style={styles.logo} source={logo} />
-    </View>
-    <View style={styles.contentContainer}>
-      <Text style={styles.header}>Sign up</Text>
-      <Text style={styles.text}>
-        Already have an account?{" "}
-        <Text
-          onPress={() => props.setIsSignUp(false)}
-          style={styles.textColored}
-        >
-          Login
-        </Text>{" "}
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email Address"
-        keyboardType="email-address"
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        keyboardType="email-address"
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Re-enter Password"
-        keyboardType="email-address"
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-      />
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
-      <Text style={styles.textCentered}>
-        By clicking Register, you agree to our{" "}
-        <Text style={styles.textColored}>
-          Terms and Data Policy.
-        </Text>{" "}
-      </Text>
-    </View>
-  </View>
-);
+const SignUpPage = (props) => {
 
-const LoginPage = (props) => (
+  const[email, setEmail] = useState('');
+  const[password, setPassword] = useState('');
+  const[passwordCheck, setPasswordCheck] = useState('');
+
+
+const handleSubmit = (e) => {
+  console.log({email, password, passwordCheck});
+  // e.preventDefault();
+  // dispatch(login(loginData, navigate));
+};
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image style={styles.logo} source={logo} />
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.header}>Sign up</Text>
+        <Text style={styles.text}>
+          Already have an account?{" "}
+          <Text
+            onPress={() => props.setIsSignUp(false)}
+            style={styles.textColored}
+          >
+            Login
+          </Text>{" "}
+        </Text>
+        <TextInput
+          name='email'
+          style={styles.input}
+          placeholder="Email Address"
+          keyboardType="email-address"
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={email}
+          onChangeText={email => setEmail(email)}
+        />
+        <TextInput
+          name='password'
+          style={styles.input}
+          placeholder="Password"
+          keyboardType="email-address"
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={password}
+          onChangeText={password => setPassword(password)}
+        />
+        <TextInput
+          name='passwordCheck'
+          style={styles.input}
+          placeholder="Re-enter Password"
+          keyboardType="email-address"
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={passwordCheck}
+          onChangeText={passwordCheck => setPasswordCheck(passwordCheck)}
+        />
+        <TouchableOpacity style={styles.button}
+        onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+        <Text style={styles.textCentered}>
+          By clicking Register, you agree to our{" "}
+          <Text style={styles.textColored}>Terms and Data Policy.</Text>{" "}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const LoginPage = (props) => {
+  
+  const[email, setEmail] = useState('');
+  const[password, setPassword] = useState('');
+
+
+const handleSubmit = (e) => {
+  console.log({email, password});
+  props.setIsLoggedIn(true);
+  // e.preventDefault();
+  // dispatch(login(loginData, navigate));
+};
+  
+  return (
   <View style={styles.container}>
     <View style={styles.logoContainer}>
       <Image style={styles.logo} source={logo} />
@@ -80,6 +115,8 @@ const LoginPage = (props) => (
         mode="outlined"
         activeOutlineColor={lime60}
         textColor={white}
+        value={email}
+        onChangeText={email => setEmail(email)}
       />
       <TextInput
         style={styles.input}
@@ -88,13 +125,25 @@ const LoginPage = (props) => (
         mode="outlined"
         activeOutlineColor={lime60}
         textColor={white}
+        value={password}
+        onChangeText={password => setPassword(password)}
       />
-      <TouchableOpacity style={styles.button} onPress={() => props.setIsLoggedIn(true)} >
+      <Text
+            style={styles.textColored}
+          >
+            Forgot your password?
+          </Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit}
+      >
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
     </View>
   </View>
-);
+)};
+
+
 
 export default function SignUpScreen(props) {
   const [isSignUp, setIsSignUp] = useState(true);

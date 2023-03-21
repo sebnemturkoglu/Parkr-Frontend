@@ -17,8 +17,24 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "locationAlwaysPermission": "Allow $(PRODUCT_NAME) to use your  a location.",
+          "isIosBackgroundLocationEnabled": "Allow $(PRODUCT_NAME) to  a use your location."
+        }
+      ]
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Yours geolocation string",
+        "NSLocationWhenInUseUsageDescription": "Your geolocatione string",
+        "NSLocationUsageDescription": "Your geolocationt string",
+        "NSLocationDefaultAccuracyReduced": "Your geoulocation string"
+      }
     },
     "android": {
       "adaptiveIcon": {

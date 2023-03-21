@@ -4,6 +4,8 @@ import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
 import MapView from "react-native-maps";
 import MapMarkers from "./MapMarkers";
+import MapViewDirections from "react-native-maps-directions";
+import { darkgrey, lime } from "../constants/colors";
 
 const LOCATION_TASK_NAME = "LOCATION_TASK_NAME";
 let foregroundSubscription = null;
@@ -117,6 +119,8 @@ export default function Map(props) {
       console.log("Location tacking stopped");
     }
   };
+
+  const GOOGLE_MAPS_APIKEY = "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks";
  
   return (
     <View style={styles.container}>
@@ -149,7 +153,27 @@ export default function Map(props) {
         {
           props.fixedMarker
           ? <MapMarkers position={props.marker} />
-          : <MapMarkers position={position} />
+          : (
+            props.multipleMarkers
+            ? props.places.map((item) => {
+              console.log(item.coordinates)
+              return (
+                <MapMarkers position={item.coordinates} />
+              );
+            })
+            : <MapMarkers position={position} />
+          )
+        }
+        {
+          props.directions
+          ?   <MapViewDirections
+          origin={props.origin}
+          destination={props.destination}
+          apikey={GOOGLE_MAPS_APIKEY}
+          strokeWidth={3}
+    strokeColor={darkgrey}
+        />
+        : null
         }
       </MapView>
     </View>

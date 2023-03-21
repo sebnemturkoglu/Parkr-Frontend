@@ -90,6 +90,23 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
         >
         <Text style={styles.buttonText}>Make changes</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonDelete} 
+        onPress={() => {
+            Alert.alert("Delete Vehicle", "Are you sure you want to delete vehicle?", [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                { text: "OK", onPress:() => navigation.navigate({
+                    name: profileScreenName,
+                    params: { id: route.params.item.id, isDelete: true },
+                    merge: true,
+                  }) },
+              ]);
+          }}
+        >
+        <Text style={styles.buttonTextDelete}>Delete vehicle</Text>
+      </TouchableOpacity>
     
     </View>
   );
@@ -139,6 +156,21 @@ const styles = StyleSheet.create({
   buttonText: {
     color: lime,
     fontWeight: "600",
+    fontSize: 16,
+  },
+  buttonDelete: {
+    width: "100%",
+    backgroundColor: "#d32f2f",
+    alignItems: "center",
+    height: 42,
+    borderRadius: 4,
+    justifyContent: "center",
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  buttonTextDelete: {
+    color: darkgrey,
+    fontWeight: "700",
     fontSize: 16,
   },
   backButton: {

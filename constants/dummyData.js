@@ -42,8 +42,8 @@ export const parkingdata = [
       name: "Bilka Park",
       distance: "3.1 km",
       rating: "4.3",
-      capacity: 14,
-      occupancy: 15,
+      capacity: 15,
+      occupancy: 14,
       fares: [
           {
               range: "0-1 Hour",

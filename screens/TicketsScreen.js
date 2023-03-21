@@ -1,6 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { darkgrey, lime, lime60, white } from "../constants/colors";
+import { currentTicketDetailsScreenName, oldTicketDetailsScreenName } from "../constants/screenNames";
 
 currentPark = {
   name: "Kardeşler Park",
@@ -40,12 +42,13 @@ const PastLines = (props) => (
   </View>
 );
 
-export default function Tickets({ navigation }) {
+export default function TicketsScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Tickets</Text>
       <View style={styles.currentContainer}>
       <Text style={styles.subheader}>Current Park</Text>
+      <TouchableOpacity onPress={() => navigation.navigate(currentTicketDetailsScreenName)}>
       <View style={styles.infoContainer}>
         <Text style={styles.currentHeader}>{currentPark.name}</Text>
         <View style={styles.bottomGroup}>
@@ -55,12 +58,16 @@ export default function Tickets({ navigation }) {
           <Text style={styles.currentBottomRigth}>Fee: {currentPark.fee}₺</Text>
         </View>
       </View>
+      </TouchableOpacity>
       </View>
       <Text style={styles.subheader}>Past Parks</Text>
       <ScrollView>
       {pastParks.map((item) => {
             return (
-              <PastLines info={item} key={item.id} />
+              <TouchableOpacity key={item.id} onPress={() => navigation.navigate(oldTicketDetailsScreenName, {data: item.id})} >
+                <PastLines info={item} navigation={navigation} />
+              </TouchableOpacity>
+              
             );
           })}
       </ScrollView>

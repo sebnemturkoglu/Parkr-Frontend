@@ -2,7 +2,6 @@ import * as React from "react";
 import Map from "../components/Map";
 import { StyleSheet, View, Text, Alert } from "react-native";
 import BackButton from "../components/BackButton";
-import { placeDetailsScreenName } from "../constants/screenNames";
 import { darkgrey60, lime, lime60, white } from "../constants/colors";
 
 const timeData = {
@@ -17,11 +16,14 @@ const timeData = {
 const MapDirectionsScreen = ({ navigation }) => {
   const [isFull, setIsFull] = React.useState(false);
 
-  React.useEffect(() => {
-    setTimeout(() => {
-      setIsFull(true);
-    }, 2000);
-  });
+  const origin = { latitude: 39.795480, longitude: 32.712426 };
+  const destination = { latitude: 39.866797, longitude: 32.758669 };
+
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsFull(true);
+  //   }, 5000);
+  // });
 
   const onBackButtonClick = () => {
     Alert.alert("Quit Route", "Do you want to quit the directions page?", [
@@ -35,7 +37,7 @@ const MapDirectionsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Map />
+      <Map origin={origin} destination={destination} directions={true} />
       <View style={styles.textGroupContainer}>
         <View style={styles.textGroup}>
           <Text style={styles.mainText}>{timeData.reaminingTime}</Text>

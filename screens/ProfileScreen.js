@@ -43,9 +43,6 @@ export default function ProfileScreen({ navigation, route }) {
 
   React.useEffect(() => {
     if (route.params?.licensePlate && route.params?.licensePlate !=  "" && route.params?.isEdit) {
-      console.log("edit");
-      // console.log(route.params?.vehicleType);
-
       let updatedList = myVehicles.map(item => 
         {
           if (item.id == route.params?.id){
@@ -54,18 +51,22 @@ export default function ProfileScreen({ navigation, route }) {
           return item; // else return unmodified item 
         });
 
-        console.log(updatedList);
+      setMyVehicles(updatedList);
+    }
+    else if (route.params?.isDelete) {
+      console.log("is delete");
+      let updatedList = myVehicles.filter(item => 
+        {
+          return item.id != route.params?.id;
+        });
 
       setMyVehicles(updatedList);
-      // // myVehicles.push({title: route.params?.licensePlate, onClick: "", id: nextId})
-      // console.log(myVehicles);
-      // nextId++;
     }
     else if (route.params?.licensePlate && route.params?.licensePlate !=  "") {
       setMyVehicles((items) => [...items, {title: route.params?.licensePlate, onClick: "", id: nextId, type: route.params?.vehicleType }]);
       nextId++;
     }
-  }, [route.params?.licensePlate]);
+  }, [route.params?.licensePlate, route.params?.isDelete]);
 
   return (
     <View style={styles.container}>

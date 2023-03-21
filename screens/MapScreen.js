@@ -1,17 +1,28 @@
 import React from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from "react-native";
 import SearchBar from "../components/SearchBar";
-import { darkgrey, lime } from "../constants/colors";
+import { darkgrey, lime, lime60, white } from "../constants/colors";
 import ParkCard from "../components/ParkCard";
 import { parkingdata as data } from "../constants/dummyData";
 import { FAB } from "react-native-paper";
-import { mapViewScreenName } from "../constants/screenNames";
+import { mapViewScreenName, placeDetailsScreenName } from "../constants/screenNames";
 
-export default function MapScreen({ navigation }) {
+export default function MapScreen({ navigation, route }) {
+
+
   return (
     <View style={styles.container}>
       <View style={styles.searchbar}>
         <SearchBar />
+        <View style={styles.filterContainer} >
+        <TouchableOpacity style={styles.buttonFilter}>
+        <Text style={styles.buttonTextFilter}>Filter</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonFilter}>
+        <Text style={styles.buttonTextFilter}>Sort</Text>
+      </TouchableOpacity>
+     
+        </View>
         <Text style={styles.header}>Nearest Parking Places</Text>
         <ScrollView>
           {data.map((item) => {
@@ -25,6 +36,7 @@ export default function MapScreen({ navigation }) {
                   rating={item.rating}
                   lowestfare={item.fares[0].fare}
                   distance={item.distance}
+                  onPress={() => navigation.navigate(placeDetailsScreenName, {data: item})}
                 />
               </View>
             );
@@ -62,8 +74,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: "20",
     letterSpacing: "0.3%",
-    marginTop: "10%",
-    marginBottom: "5%"
+    marginTop: "8%",
+    marginBottom: "3%"
   },
   cardContainer: {
     marginVertical: "1%",
@@ -72,7 +84,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     marginLeft: 10,
     // left: 0,
-    bottom: 2,
+    bottom: 42,
     borderRadius: 32,
     backgroundColor: lime,
   },
@@ -80,6 +92,24 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
+  },
+  filterContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24
+  },
+  buttonFilter: {
+    width: "48%",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: white,
+    paddingVertical: 4,
+    marginHorizontal: 4,
+  },
+  buttonTextFilter: {
+    fontSize: 14,
+    color: white,
   }
 });

@@ -4,21 +4,41 @@ import SearchBar from "../components/SearchBar";
 import { darkgrey, lime } from "../constants/colors";
 import { parkingdata as data } from "../constants/dummyData";
 import ParkingPlaceCard from "../components/ParkingPlaceCard";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.searchbar}>
         <Text style={styles.header}>Find your parking spot</Text>
-        <SearchBar />
+        {/* <SearchBar /> */}
+        <GooglePlacesAutocomplete
+          placeholder="Search"
+          fetchDetails={true}
+          GooglePlacesSearchQuery={{
+            rankby: "distance"
+          }
+          }
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            console.log("Searched place:", details.geometry.location.lat, details.geometry.location.lng);
+          }}
+          query={{
+            key: "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks",
+            language: "en",
+            components: "country:tr"
+          }}
+          styles={{
+            listView: { backgroundColor: "white", position: "absolute", marginTop: 50 },
+          }}
+        />
       </View>
       <View>
-        <Text style={styles.subheader} >Nearby Places</Text>
+        <Text style={styles.subheader}>Nearby Places</Text>
         <ScrollView horizontal={true}>
           {data.map((item) => {
-            console.log(item.coordinates);
             return (
-              <View style={styles.cardContainer} key={item.id} >
+              <View style={styles.cardContainer} key={item.id}>
                 <ParkingPlaceCard
                   image={item.image}
                   name={item.name}
@@ -35,11 +55,11 @@ export default function HomeScreen({ navigation }) {
         </ScrollView>
       </View>
       <View>
-        <Text style={styles.subheader} >Recent Places</Text>
+        <Text style={styles.subheader}>Recent Places</Text>
         <ScrollView horizontal={true}>
           {data.map((item) => {
             return (
-              <View style={styles.cardContainer} key={item.id} >
+              <View style={styles.cardContainer} key={item.id}>
                 <ParkingPlaceCard
                   image={item.image}
                   name={item.name}
@@ -68,8 +88,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchbar: {
-    marginVertical: 30,
+    marginTop: 30,
+    marginBottom: 45,
     marginHorizontal: 20,
+    flex: 0, 
+    // position: "absolute", 
+    // width: "100%", 
+    zIndex: 1
+
   },
   header: {
     color: lime,
@@ -84,11 +110,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: "16",
     letterSpacing: "0.3%",
-    marginVertical: 30,
+    marginVertical: 20,
     marginHorizontal: 20,
   },
   cardContainer: {
     width: 260,
     marginHorizontal: 10,
-  }
+  },
 });

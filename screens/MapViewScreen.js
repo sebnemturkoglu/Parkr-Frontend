@@ -37,7 +37,7 @@ const MapViewScreen = ({ navigation }) => {
         enabled
       >
         <View style={styles.container}>
-          <Map />
+          <Map multipleMarkers={true} places={data}/>
           <View style={styles.cardContainer}>
             <ParkCard
               image={data[0].image}
