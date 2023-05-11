@@ -156,9 +156,9 @@ export default function Map(props) {
           : (
             props.multipleMarkers
             ? props.places.map((item) => {
-              console.log(item.coordinates)
+              // console.log(item.coordinates)
               return (
-                <MapMarkers position={item.coordinates} />
+                <MapMarkers position={item.coordinates} key={item.placeID} />
               );
             })
             : <MapMarkers position={position} />

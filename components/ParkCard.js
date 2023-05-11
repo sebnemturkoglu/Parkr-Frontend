@@ -14,7 +14,7 @@ export default function ParkCard (props) {
       <View style={styles.infoGroup} >
         <View style={styles.headerGroup}>
           <Text style={styles.textHeader}>{props.name}</Text>
-          <Text style={styles.textBody}>{props.distance}</Text>
+          <Text style={styles.textBody}>{props.distance} km</Text>
         </View>
         <Text style={styles.textBody}>{props.rating}/5 points</Text>
       </View>
@@ -32,7 +32,9 @@ export default function ParkCard (props) {
       </View>
     </View>
     <View style={styles.imageGroup}>
-      <Image style={styles.image} source={props.image} />
+      <Image style={styles.image} source={{
+          uri: props.image,
+        }} />
     </View>
   </View>
   </TouchableOpacity>
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
+    // resizeMode: "contain",
     borderRadius: 26,
   },
   textHeader: {

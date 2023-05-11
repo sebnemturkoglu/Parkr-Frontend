@@ -1,14 +1,39 @@
-import React from "react";
-import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from "react-native";
-import SearchBar from "../components/SearchBar";
-import { darkgrey, lime, lime60, white } from "../constants/colors";
-import ParkCard from "../components/ParkCard";
-import { parkingdata as data } from "../constants/dummyData";
+import * as Location from "expo-location";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FAB } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import ParkCard from "../components/ParkCard";
+import SearchBar from "../components/SearchBar";
+import { darkgrey, lime, white } from "../constants/colors";
+import { parkingdata as data } from "../constants/dummyData";
 import { mapViewScreenName, placeDetailsScreenName } from "../constants/screenNames";
 
 export default function MapScreen({ navigation, route }) {
 
+  const dispatch = useDispatch();
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let loc = await Location.getCurrentPositionAsync({}).then((locVal) => {
+        let latitude = locVal.coords.latitude;
+        let longitude = locVal.coords.longitude;
+        console.log("loca values", { latitude, longitude });
+        dispatch(getNearbyPlaces({ latitude, longitude }));
+      });
+      setLocation(loc);
+    })();
+    
+  }, [location]);
+
+  const places = useSelector((state) => state.places);
 
   return (
     <View style={styles.container}>
@@ -24,8 +49,8 @@ export default function MapScreen({ navigation, route }) {
      
         </View>
         <Text style={styles.header}>Nearest Parking Places</Text>
-        <ScrollView>
-          {data.map((item) => {
+        <ScrollView style={styles.scrollView}>
+          {places.map((item) => {
             return (
               <View style={styles.cardContainer} key={item.id} >
                 <ParkCard
@@ -34,7 +59,7 @@ export default function MapScreen({ navigation, route }) {
                   capacity={item.capacity}
                   occupancy={item.occupancy}
                   rating={item.rating}
-                  lowestfare={item.fares[0].fare}
+                  lowestfare={item.lowestfare}
                   distance={item.distance}
                   onPress={() => navigation.navigate(placeDetailsScreenName, {data: item})}
                 />
@@ -69,6 +94,13 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     marginHorizontal: 15,
   },
+  scrollView: {
+    // flex: 1,
+    height:"80%",
+  },
+  scrollContainer:{
+    flex:1
+  },
   header: {
     color: lime,
     fontWeight: "600",
@@ -93,6 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flexDirection: "row",
     justifyContent: "center",
+    flexGrow: 1,
   },
   filterContainer: {
     width: "100%",

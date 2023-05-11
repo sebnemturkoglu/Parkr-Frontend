@@ -1,19 +1,29 @@
 import { useState } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
-import MainContainer from './navigation/MainContainer';
-import SignUpScreen from './screens/SignUpScreen';
+import AppContainer from './navigation/AppContainer';
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
+import AuthContextProvider from './AuthContext';
+import { AuthContext } from './AuthContext';
+import placesReducer from "./reducers/places";
+import { useContext } from 'react';
+
+
+const store = configureStore({
+  reducer: {
+    places: placesReducer
+  },
+});
 
 export default function App() {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   return (
+    <Provider store={store}>
     <PaperProvider>
-      {
-        isLoggedIn
-        ? <MainContainer/>
-        : <SignUpScreen setIsLoggedIn={setIsLoggedIn} />
-      }
+      <AuthContextProvider>
+        <AppContainer />
+      </AuthContextProvider>
     </PaperProvider>
+    </Provider>
   );
 }

@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import SearchBar from "../components/SearchBar";
 import BackButton from "../components/BackButton";
 import ParkCard from "../components/ParkCard";
@@ -21,6 +23,35 @@ const DismissKeyboard = ({ children }) => (
 );
 
 const MapViewScreen = ({ navigation }) => {
+
+  const dispatch = useDispatch();
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let loc = await Location.getCurrentPositionAsync({});
+      setLocation(loc);
+      
+    })();
+
+    if(location){
+      let latitude = location.coords.latitude;
+      let longitude = location.coords.longitude;
+      dispatch(getNearbyPlaces({ latitude, longitude}))
+    }
+
+  }, []);
+
+  const places = useSelector((state) => state.places);
+
   const onBackButtonClick = () => {
     navigation.goBack();
   };
@@ -37,7 +68,7 @@ const MapViewScreen = ({ navigation }) => {
         enabled
       >
         <View style={styles.container}>
-          <Map multipleMarkers={true} places={data}/>
+          <Map multipleMarkers={true} places={places}/>
           <View style={styles.cardContainer}>
             <ParkCard
               image={data[0].image}
@@ -45,10 +76,11 @@ const MapViewScreen = ({ navigation }) => {
               capacity={data[0].capacity}
               occupancy={data[0].occupancy}
               rating={data[0].rating}
-              lowestfare={data[0].fares[0].fare}
+              lowestfare={data[0].lowestFare}
               distance={data[0].distance}
               onPress={onCardPress}
             />
+            
           </View>
           <View style={styles.searchbar}>
             <SearchBar />

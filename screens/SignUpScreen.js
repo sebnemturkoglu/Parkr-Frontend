@@ -1,20 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import { darkgrey, darkgrey40, lime60, white, lime } from "../constants/colors";
 import logo from "../assets/logo.png";
 import { TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { AuthContext } from "../AuthContext";
+
 
 const SignUpPage = (props) => {
 
-  const[email, setEmail] = useState('');
+  dispatch = useDispatch();
+  const { register } = useContext(AuthContext);
+
+  const[name, setName] = useState('');
+  const[mail, setEmail] = useState('');
   const[password, setPassword] = useState('');
-  const[passwordCheck, setPasswordCheck] = useState('');
+  const[phoneNumber, setPhoneNumber] = useState('');
 
 
 const handleSubmit = (e) => {
-  console.log({email, password, passwordCheck});
-  // e.preventDefault();
-  // dispatch(login(loginData, navigate));
+  register(mail, password, phoneNumber, name);
+  // dispatch(signUp({...initialBS, name, mail: mail, password, phone: phoneNumber}, props.setIsLoggedIn));
+  // props.setIsLoggedIn(true); // bu her zaman olmayabilir
 };
 
   return (
@@ -34,6 +41,16 @@ const handleSubmit = (e) => {
           </Text>{" "}
         </Text>
         <TextInput
+          name='name'
+          style={styles.input}
+          placeholder="Your Name"
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={name}
+          onChangeText={name => setName(name)}
+        />
+        <TextInput
           name='email'
           style={styles.input}
           placeholder="Email Address"
@@ -41,8 +58,8 @@ const handleSubmit = (e) => {
           mode="outlined"
           activeOutlineColor={lime60}
           textColor={white}
-          value={email}
-          onChangeText={email => setEmail(email)}
+          value={mail}
+          onChangeText={mail => setEmail(mail)}
         />
         <TextInput
           name='password'
@@ -56,15 +73,15 @@ const handleSubmit = (e) => {
           onChangeText={password => setPassword(password)}
         />
         <TextInput
-          name='passwordCheck'
+          name='phonenumber'
           style={styles.input}
-          placeholder="Re-enter Password"
-          keyboardType="email-address"
+          placeholder="Phone Number"
+          keyboardType="phone-pad"
           mode="outlined"
           activeOutlineColor={lime60}
           textColor={white}
-          value={passwordCheck}
-          onChangeText={passwordCheck => setPasswordCheck(passwordCheck)}
+          value={phoneNumber}
+          onChangeText={phoneNumber => setPhoneNumber(phoneNumber)}
         />
         <TouchableOpacity style={styles.button}
         onPress={handleSubmit}>
@@ -84,12 +101,12 @@ const LoginPage = (props) => {
   const[email, setEmail] = useState('');
   const[password, setPassword] = useState('');
 
+  const { login } = useContext(AuthContext);
+
 
 const handleSubmit = (e) => {
-  console.log({email, password});
-  props.setIsLoggedIn(true);
-  // e.preventDefault();
-  // dispatch(login(loginData, navigate));
+  login(email, password);
+
 };
   
   return (
@@ -145,13 +162,13 @@ const handleSubmit = (e) => {
 
 
 
-export default function SignUpScreen(props) {
+export default function SignUpScreen() {
   const [isSignUp, setIsSignUp] = useState(true);
 
   return isSignUp ? (
-    <SignUpPage setIsSignUp={setIsSignUp} />
+    <SignUpPage setIsSignUp={setIsSignUp}  />
   ) : (
-    <LoginPage setIsSignUp={setIsSignUp} setIsLoggedIn={props.setIsLoggedIn} />
+    <LoginPage setIsSignUp={setIsSignUp} />
   );
 }
 

@@ -141,4 +141,74 @@ export const parkingdata = [
         latitude: 39.870585,
       }
     },
+    {
+        id: 5,
+        image: parkimg,
+        name: "Kardeşler Park",
+        distance: "4.3 km",
+        rating: "4.9",
+        capacity: 25,
+        occupancy: 9,
+        fares: [
+            {
+                range: "0-1 Hour",
+                fare: "20₺"
+            },
+            {
+                range: "1-3 Hour",
+                fare: "25₺"
+            },
+            {
+                range: "3-6 Hour",
+                fare: "30₺"
+            },
+            {
+                range: "6-10 Hour",
+                fare: "35₺"
+            },
+            {
+                range: "10+ Hour",
+                fare: "50₺"
+            },
+        ],
+        coordinates: {
+          longitude: 32.752100,
+          latitude: 39.870585,
+        }
+      },
+      {
+        id: 6,
+        image: parkimg,
+        name: "Kardeşler Park",
+        distance: "4.3 km",
+        rating: "4.9",
+        capacity: 25,
+        occupancy: 9,
+        fares: [
+            {
+                range: "0-1 Hour",
+                fare: "20₺"
+            },
+            {
+                range: "1-3 Hour",
+                fare: "25₺"
+            },
+            {
+                range: "3-6 Hour",
+                fare: "30₺"
+            },
+            {
+                range: "6-10 Hour",
+                fare: "35₺"
+            },
+            {
+                range: "10+ Hour",
+                fare: "50₺"
+            },
+        ],
+        coordinates: {
+          longitude: 32.752100,
+          latitude: 39.870585,
+        }
+      },
   ];

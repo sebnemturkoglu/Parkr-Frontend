@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { darkgrey, darkgrey60, lime, lime60, white } from "../constants/colors";
 import { List, Divider } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { addVehicleScreenName, editVehicleInformationScreenName } from "../constants/screenNames";
+import { AuthContext } from "../AuthContext";
 
 const listItems = [
   {
@@ -17,7 +18,7 @@ const listItems = [
     icon: "cog",
     onClick: "",
     id: 1,
-  },
+  }
 ];
 
 const myVehiclesInit = [
@@ -36,6 +37,8 @@ const myVehiclesInit = [
 ];
 
 export default function ProfileScreen({ navigation, route }) {
+
+  const { logout } = useContext(AuthContext);
 
   const [myVehicles, setMyVehicles] = useState(myVehiclesInit);
 
@@ -84,6 +87,15 @@ export default function ProfileScreen({ navigation, route }) {
             </TouchableOpacity>
           );
         })}
+            <TouchableOpacity onPress={() => {logout();}} >
+              <List.Item
+                title="Logout"
+                titleStyle={styles.listItem}
+                left={() => <List.Icon color={white} icon="cog" />}
+                right={() => <List.Icon color={white} icon="chevron-right" />}
+    
+              />
+            </TouchableOpacity>
       </List.Section>
 
       <Text style={styles.subheader} >My Vehicles</Text>

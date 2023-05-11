@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
+import * as Location from "expo-location";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { darkgrey, lime } from "../constants/colors";
 import { parkingdata as data } from "../constants/dummyData";
 import ParkingPlaceCard from "../components/ParkingPlaceCard";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { getNearbyPlaces } from "../actions/places";
 
 export default function HomeScreen({ navigation }) {
+  const dispatch = useDispatch();
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let loc = await Location.getCurrentPositionAsync({}).then((locVal) => {
+        let latitude = locVal.coords.latitude;
+        let longitude = locVal.coords.longitude;
+        console.log("loca values", { latitude, longitude });
+        dispatch(getNearbyPlaces({ latitude, longitude }));
+      });
+      setLocation(loc);
+    })();
+    
+  }, [location]);
+
+  const places = useSelector((state) => state.places);
+
   return (
     <View style={styles.container}>
       <View style={styles.searchbar}>
@@ -16,36 +44,43 @@ export default function HomeScreen({ navigation }) {
           placeholder="Search"
           fetchDetails={true}
           GooglePlacesSearchQuery={{
-            rankby: "distance"
-          }
-          }
+            rankby: "distance",
+          }}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            console.log("Searched place:", details.geometry.location.lat, details.geometry.location.lng);
+            console.log(
+              "Searched place:",
+              details.geometry.location.lat,
+              details.geometry.location.lng
+            );
           }}
           query={{
             key: "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks",
             language: "en",
-            components: "country:tr"
+            components: "country:tr",
           }}
           styles={{
-            listView: { backgroundColor: "white", position: "absolute", marginTop: 50 },
+            listView: {
+              backgroundColor: "white",
+              position: "absolute",
+              marginTop: 50,
+            },
           }}
         />
       </View>
       <View>
         <Text style={styles.subheader}>Nearby Places</Text>
         <ScrollView horizontal={true}>
-          {data.map((item) => {
+          {places.map((item) => {
             return (
-              <View style={styles.cardContainer} key={item.id}>
+              <View style={styles.cardContainer} key={item.placeID}>
                 <ParkingPlaceCard
                   image={item.image}
                   name={item.name}
                   capacity={item.capacity}
                   occupancy={item.occupancy}
                   rating={item.rating}
-                  lowestfare={item.fares[0].fare}
+                  lowestfare={item.lowestFare}
                   distance={item.distance}
                   coordinates={item.coordinates}
                 />
@@ -91,11 +126,10 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 45,
     marginHorizontal: 20,
-    flex: 0, 
-    // position: "absolute", 
-    // width: "100%", 
-    zIndex: 1
-
+    flex: 0,
+    // position: "absolute",
+    // width: "100%",
+    zIndex: 1,
   },
   header: {
     color: lime,
