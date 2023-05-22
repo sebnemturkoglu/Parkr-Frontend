@@ -3,42 +3,50 @@ import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
 import { darkgrey, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-export default function ParkCard (props) {
+export default function ParkCard(props) {
 
-  return(
-    <TouchableOpacity
-  activeOpacity={0.7}
-  onPress={props.onPress}>
-  <View style={styles.container}>
-    <View style={styles.textGroup}>
-      <View style={styles.infoGroup} >
-        <View style={styles.headerGroup}>
-          <Text style={styles.textHeader}>{props.name}</Text>
-          <Text style={styles.textBody}>{props.distance} km</Text>
+  return (
+    <TouchableOpacity activeOpacity={0.7} onPress={props.onPress}>
+      <View style={styles.container}>
+        <View style={styles.textGroup}>
+          <View style={styles.infoGroup}>
+            <View style={styles.headerGroup}>
+              <Text style={styles.textHeader}>{props.name}</Text>
+              <Text style={styles.textBody}>{props.distance} km</Text>
+              {
+                props.hasAgreement
+                ? <Ionicons name="heart" size={16} color={lime} style={styles.chip} />
+                : null
+              }
+            </View>
+            <Text style={styles.textBody}>{props.rating}/5 points</Text>
+          </View>
+          {props.hasAgreement ? (
+            <View style={styles.iconGroupContainer}>
+              <View style={styles.iconGroup}>
+                <Ionicons name="car-sport-sharp" size={16} color={white} />
+                <Text style={styles.iconText}>
+                  {props.occupancy}/{props.capacity}
+                </Text>
+              </View>
+              <View style={styles.iconGroup}>
+                <Ionicons name="logo-usd" size={16} color={white} />
+                <Text style={styles.iconText}>from {props.lowestfare}</Text>
+              </View>
+            </View>
+          ) : null}
         </View>
-        <Text style={styles.textBody}>{props.rating}/5 points</Text>
+        <View style={styles.imageGroup}>
+          <Image
+            style={styles.image}
+            source={{
+              uri: props.image,
+            }}
+          />
+        </View>
       </View>
-      <View style={styles.iconGroupContainer}>
-        <View style={styles.iconGroup}>
-          <Ionicons name="car-sport-sharp" size={16} color={white} />
-          <Text style={styles.iconText}>
-            {props.occupancy}/{props.capacity}
-          </Text>
-        </View>
-        <View style={styles.iconGroup}>
-          <Ionicons name="logo-usd" size={16} color={white} />
-          <Text style={styles.iconText}>from {props.lowestfare}</Text>
-        </View>
-      </View>
-    </View>
-    <View style={styles.imageGroup}>
-      <Image style={styles.image} source={{
-          uri: props.image,
-        }} />
-    </View>
-  </View>
-  </TouchableOpacity>
-  )
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -59,8 +67,8 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "100%",
     padding: 12,
-    flexDirection: 'column',
-    justifyContent: "space-evenly"
+    flexDirection: "column",
+    justifyContent: "space-evenly",
   },
   imageGroup: {
     width: "30%",
@@ -99,5 +107,8 @@ const styles = StyleSheet.create({
     color: white,
     fontSize: 14,
     marginRight: 6,
+  },
+  chip: {
+    marginLeft: 8,
   },
 });

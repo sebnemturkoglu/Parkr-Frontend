@@ -108,6 +108,7 @@ export default function MapScreen({ navigation, route }) {
                   rating={item.rating}
                   lowestfare={item.lowestfare}
                   distance={item.distance}
+                  hasAgreement={item.hasAggreement}
                   onPress={() =>
                     navigation.navigate(placeDetailsScreenName, { placeID: item.placeID })
                   }
