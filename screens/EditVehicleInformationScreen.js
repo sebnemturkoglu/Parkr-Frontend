@@ -1,5 +1,9 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, Alert } from "react-native";
+import React from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { FAB, RadioButton, TextInput } from "react-native-paper";
+import { useDispatch } from "react-redux";
+import { deleteVehicle, editVehicle } from "../actions/user";
 import {
   darkgrey,
   darkgrey40,
@@ -8,26 +12,21 @@ import {
   lime60,
   white,
 } from "../constants/colors";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { FAB, TextInput, RadioButton } from "react-native-paper";
 import { profileScreenName } from "../constants/screenNames";
-import { useDispatch } from "react-redux";
-import { deleteVehicle } from "../actions/user";
-
 const vehicleTypes = [
   {
-    title: "Type A",
-    value: "a",
+    title: "SUV",
+    value: "SUV",
     id: 0,
   },
   {
-    title: "Type B",
-    value: "b",
+    title: "SEDAN",
+    value: "SEDAN",
     id: 1,
   },
   {
-    title: "Type C",
-    value: "c",
+    title: "MINIVAN",
+    value: "MINIVAN",
     id: 2,
   },
 ];
@@ -40,8 +39,9 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
     navigation.goBack();
   };
 
-  const [type, setType] = React.useState(route.params.item.type);
-  const [licensePlate, setLicensePlate] = React.useState("");
+  const [type, setType] = React.useState(route.params.item.carType);
+  const [licensePlate, setLicensePlate] = React.useState(route.params.item.plate);
+  const [model, setModel] = React.useState(route.params.item.model);
 
   return (
     <View style={styles.container}>
@@ -62,6 +62,15 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
         textColor={white}
         value={licensePlate}
         onChangeText={licensePlate => setLicensePlate(licensePlate)}
+      />
+              <TextInput
+        style={styles.input}
+        placeholder={route.params.item.model}
+        mode="outlined"
+        activeOutlineColor={lime60}
+        textColor={white}
+        value={model}
+        onChangeText={model => setModel(model)}
       />
     
     <Text style={styles.subheader} >Edit vehicle type</Text>
@@ -85,6 +94,7 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
                   style: "cancel",
                 },
                 { text: "OK", onPress:() => {
+                  dispatch(editVehicle({id: route.params.item.id, plate: licensePlate, carType: type, model: model, fuelType: "GASOLINE"}));
                   navigation.navigate({
                     name: profileScreenName,
                   })} },

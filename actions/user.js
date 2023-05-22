@@ -40,6 +40,15 @@ export const addVehicle = (req) => async (dispatch) => {
 	}
 };
 
+export const editVehicle = (req) => async (dispatch) => {
+	try {
+		const res = await API.editVehicle(req);
+		const { data } = await API.getVehicles();
+		dispatch({ type: "EDIT_VEHICLES", payload: data });
+	} catch (error) {
+		console.error("editVehicle Error",error);
+	}
+};
 
 export const deleteVehicle = (req) => async (dispatch) => {
 	try {

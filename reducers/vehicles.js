@@ -14,6 +14,10 @@ export default (state = initialState, action) => {
       console.log("payload:", action.payload);
       return action.payload;
 
+    case "EDIT_VEHICLES":
+      console.log("payload:", action.payload);
+      return action.payload;
+
     default:
       return state;
   }

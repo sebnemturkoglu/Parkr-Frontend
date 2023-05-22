@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 
 // screens
 import ProfileScreen from "../screens/ProfileScreen";
-import AddVehicleScreen from "../screens/AddVehcileScreen";
+import AddVehicleScreen from "../screens/AddVehicleScreen";
 import EditVehicleInformationScreen from "../screens/EditVehicleInformationScreen";
 
 export default function ProfileStack() {
