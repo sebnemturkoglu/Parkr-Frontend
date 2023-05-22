@@ -13,7 +13,7 @@ export default function ParkingPlaceCard( props ) {
         <View style={styles.headerGroup}>
           <View style={styles.headerGroupLeft}>
             <Text style={styles.textHeader}>{props.name}</Text>
-            <Text style={styles.textBody}>{props.distance}</Text>
+            <Text style={styles.textBody}>{props.distance} km</Text>
           </View>
           <View>
             <Ionicons name="chevron-forward" size={20} color={white} />

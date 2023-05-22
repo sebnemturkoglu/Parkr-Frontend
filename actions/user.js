@@ -1,28 +1,21 @@
-// export const createUser = (user) => async (dispatch) => {
-// 	try {
-// 		const { data } = await api.createUser(user);
-// 		dispatch({ type: "CREATE_USER", payload: data });
-// 		dispatch({ type: 'CRE_USER_SUCC', payload: "Successfully created the user."});
-// 	} catch (e) {
-// 		switch(e.response.status){
-// 			case 400:
-// 			  dispatch({type: 'CRE_USER_FAIL', payload: e.response.data.errors[0].msg});
-// 			  break;
-// 			case 500:
-// 			  dispatch({type: 'CRE_USER_FAIL', payload: "Error: ".concat(e.response.data)});
-// 			  break;
-// 			default:
-// 			  break;
-// 		  }
-// 		console.log(e.response);
-// 	}
-// };
+import * as API from "../api/user";
 
-// export const getUsers = () => async (dispatch) => {
-// 	try {
-// 		const { data } = await api.fetchUsers();
-// 		dispatch({ type: "FETCH_ALL_USERS", payload: data });
-// 	} catch (error) {
-// 		console.log(error.message);
-// 	}
-// };
+export const getPastParkingData = () => async (dispatch) => {
+	try {
+		const { data } = await API.getPastParking();
+		console.log("action getPastParkingData", data);
+		dispatch({ type: "GET_PAST_PARKING_DATA", payload: data });
+	} catch (error) {
+		console.error("getPastParkingData Error",error);
+	}
+};
+
+export const getCurrentParkingData = () => async (dispatch) => {
+	try {
+		const { data } = await API.getCurrentParking();
+		console.log("action getCurrentParkingData", data);
+		dispatch({ type: "GET_CURRENT_PARKING_DATA", payload: data });
+	} catch (error) {
+		console.error("getCurrentParkingData Error",error);
+	}
+};

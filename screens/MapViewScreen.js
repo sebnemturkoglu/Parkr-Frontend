@@ -71,20 +71,18 @@ const MapViewScreen = ({ navigation }) => {
           <Map multipleMarkers={true} places={places}/>
           <View style={styles.cardContainer}>
             <ParkCard
-              image={data[0].image}
-              name={data[0].name}
-              capacity={data[0].capacity}
-              occupancy={data[0].occupancy}
-              rating={data[0].rating}
-              lowestfare={data[0].lowestFare}
-              distance={data[0].distance}
+              image={places[0].image}
+              name={places[0].name}
+              capacity={places[0].capacity}
+              occupancy={places[0].occupancy}
+              rating={places[0].rating}
+              lowestfare={places[0].lowestFare}
+              distance={places[0].distance}
               onPress={onCardPress}
             />
             
           </View>
-          <View style={styles.searchbar}>
-            <SearchBar />
-          </View>
+
           <BackButton onClick={onBackButtonClick} />
         </View>
       </KeyboardAvoidingView>
@@ -115,7 +113,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     padding: 10,
     height: "15%",
-    bottom: 140,
+    bottom: 60,
   },
 });
 

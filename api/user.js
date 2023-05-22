@@ -1,14 +1,33 @@
 import axios from "axios";
-const API = axios.create({ baseURL: "https://parkr-yxog6oqeqq-ew.a.run.app" });
+import * as SecureStore from 'expo-secure-store';
 
-API.interceptors.request.use((req) => {
-    if (localStorage.getItem("profile")) {
-      req.headers.Authorization = `Bearer ${
-        JSON.parse(localStorage.getItem("token"))
-      }`;
-    }
-    return req;
-  });
+const API = axios.create({ baseURL: "https://parkr-yxog6oqeqq-ew.a.run.app"});
 
-// export const fetchUsers = () => API.get("/admin/users");
-export const getCurrentParking = () => API.get("");
+
+export async function getPastParking() {
+  const token = await SecureStore.getItemAsync('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.get("/users/past-parking", {headers});
+    return response.data;
+
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
+
+export async function getCurrentParking() {
+  const token = await SecureStore.getItemAsync('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.get("/users/current-parking", {headers});
+    return response.data;
+
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}

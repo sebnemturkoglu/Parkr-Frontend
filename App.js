@@ -1,17 +1,21 @@
-import { useState } from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
-import AppContainer from './navigation/AppContainer';
 import { configureStore } from "@reduxjs/toolkit";
+import { Provider as PaperProvider } from 'react-native-paper';
 import { Provider } from "react-redux";
 import AuthContextProvider from './AuthContext';
-import { AuthContext } from './AuthContext';
+import AppContainer from './navigation/AppContainer';
 import placesReducer from "./reducers/places";
-import { useContext } from 'react';
-
+import searchPlaces from './reducers/searchPlaces';
+import placeDetails from "./reducers/placeDetails";
+import currentParkingData from "./reducers/currentParkingData";
+import pastParkingData from "./reducers/pastParkingData";
 
 const store = configureStore({
   reducer: {
-    places: placesReducer
+    searchPlaces, searchPlaces,
+    places: placesReducer,
+    placeDetails: placeDetails,
+    pastParkingData: pastParkingData,
+    currentParkingData: currentParkingData,
   },
 });
 

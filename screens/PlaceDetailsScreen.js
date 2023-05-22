@@ -1,17 +1,30 @@
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Map from "../components/Map";
-import { darkgrey, white, lime, lime60 } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { FAB } from "react-native-paper";
+import Map from "../components/Map";
+import { darkgrey, lime, lime60, white } from "../constants/colors";
 import { mapDirecrtionsScreenName } from "../constants/screenNames";
+import { getPlaceDetails } from "../actions/places";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function PlaceDetailsScreen({ navigation, route }) {
+
+  const dispatch = useDispatch();
+
   const onBackButtonClick = () => {
     navigation.goBack();
   };
 
-  id = 0;
+  useEffect(() => {
+    const place_id = route.params?.placeID;
+    dispatch(getPlaceDetails({placeID: place_id}));
+  }, []);
+
+  const placeDetails = useSelector((state) => state.placeDetails);
+
+  let key = 0;
 
   return (
     <View style={styles.container}>
@@ -24,35 +37,39 @@ export default function PlaceDetailsScreen({ navigation, route }) {
         onPress={onBackButtonClick}
       />
       <View style={styles.mapContainer}>
-        <Map scrollDisabled={true} fixedMarker={true} marker={route.params.data.coordinates} />
+        <Map scrollDisabled={true} fixedMarker={true} marker={placeDetails.coordinates} />
       </View>
-      <Text style={styles.header}>{route.params.data.name}</Text>
-      <Text style={styles.ratingText}>{route.params.data.rating}/5 points</Text>
+      <Text style={styles.header}>{placeDetails.name}</Text>
+      <Text style={styles.ratingText}>{placeDetails.rating}/5 points</Text>
       <View style={styles.iconGroupContainer}>
         <View style={styles.iconGroup}>
           <Ionicons name="car-sport-sharp" size={16} color={white} />
           <Text style={styles.iconText}>
-            {route.params.data.occupancy}/{route.params.data.capacity}
+            {placeDetails.occupancy}/{placeDetails.capacity}
           </Text>
         </View>
         <View style={styles.iconGroup}>
           <Ionicons name="logo-usd" size={16} color={white} />
           <Text style={styles.iconText}>
-            from {route.params.data.fares[0].fare}
+            from {placeDetails.fares ? placeDetails.fares[0].fare : "fare information missing"}
           </Text>
         </View>
       </View>
       <View style={styles.faresGroup}>
         <Text style={styles.faresHeader}>Fares</Text>
-        {route.params.data.fares.map((item) => {
-          id++;
+        {placeDetails.fares
+        ?placeDetails.fares.map((item) => {
+          key++;
           return (
-            <View style={styles.fareLineGroup} key={id} > 
+            <View style={styles.fareLineGroup} key={key} > 
               <Text style={styles.textFares}>{item.range}</Text>
               <Text style={styles.textFares}>{item.fare}</Text>
             </View>
           );
-        })}
+        })
+      : <View style={styles.fareLineGroup} key={key} > 
+      <Text style={styles.textFares}>Fare information missing.</Text>
+    </View>}
       </View>
       <View style={styles.fabContainer}>
         <FAB

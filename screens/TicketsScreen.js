@@ -1,8 +1,13 @@
-import React from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import React, { useEffect } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { getPastParkingData, getCurrentParkingData } from "../actions/user";
 import { darkgrey, lime, lime60, white } from "../constants/colors";
-import { currentTicketDetailsScreenName, oldTicketDetailsScreenName } from "../constants/screenNames";
+import {
+  currentTicketDetailsScreenName,
+  oldTicketDetailsScreenName,
+} from "../constants/screenNames";
 
 currentPark = {
   name: "Kardeşler Park",
@@ -11,65 +16,102 @@ currentPark = {
 };
 
 pastParks = [
-  {
-    id:1,
-    name: "Bilka Park",
-    date: "11.11.2022",
-    fee: "20",
-  },
-  {
-    id:2,
-    name: "Kardeşler Park",
-    date: "10.11.2022",
-    fee: "25",
-  },
-  {id:3,
-    name: "Kardeşler Park",
-    date: "8.11.2022",
-    fee: "25",
-  },
+  // {
+  //   id: 1,
+  //   name: "Bilka Park",
+  //   date: "11.11.2022",
+  //   fee: "20",
+  // },
+  // {
+  //   id: 2,
+  //   name: "Kardeşler Park",
+  //   date: "10.11.2022",
+  //   fee: "25",
+  // },
+  // { id: 3, name: "Kardeşler Park", date: "8.11.2022", fee: "25" },
 ];
 
 const PastLines = (props) => (
   <View style={styles.pastContainer}>
     <Text style={styles.pastHeader}>{props.info.name}</Text>
     <View style={styles.bottomGroup}>
-      <Text style={styles.pastBottomLeft}>
-        Start Time: {props.info.date}
-      </Text>
+      <Text style={styles.pastBottomLeft}>Start Time: {props.info.date}</Text>
       <Text style={styles.pastBottomRigth}>Fee: {props.info.fee}₺</Text>
     </View>
   </View>
 );
 
+const CurrentLines = (props) => (
+  <View style={styles.infoContainer}>
+    <Text style={styles.currentHeader}>{props.info.name}</Text>
+    <View style={styles.bottomGroup}>
+      <Text style={styles.currentBottomLeft}>
+        Start Time: {props.info.startTime}
+      </Text>
+      <Text style={styles.currentBottomRigth}>Fee: {props.info.fee}₺</Text>
+    </View>
+  </View>
+);
+
 export default function TicketsScreen({ navigation }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getPastParkingData());
+    dispatch(getCurrentParkingData());
+  }, []);
+
+  const pastParkingData = useSelector((state) => state.pastParkingData);
+  const currentParkingData = useSelector((state) => state.currentParkingData);
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Tickets</Text>
       <View style={styles.currentContainer}>
-      <Text style={styles.subheader}>Current Park</Text>
-      <TouchableOpacity onPress={() => navigation.navigate(currentTicketDetailsScreenName)}>
-      <View style={styles.infoContainer}>
-        <Text style={styles.currentHeader}>{currentPark.name}</Text>
-        <View style={styles.bottomGroup}>
-          <Text style={styles.currentBottomLeft}>
-            Start Time: {currentPark.startTime}
-          </Text>
-          <Text style={styles.currentBottomRigth}>Fee: {currentPark.fee}₺</Text>
-        </View>
-      </View>
-      </TouchableOpacity>
+        <Text style={styles.subheader}>Current Park</Text>
+
+        <ScrollView>
+          {
+          currentParkingData != null && currentParkingData.length !== 0 
+          ? currentParkingData.map((item) => {
+            return (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(currentTicketDetailsScreenName)
+                }
+              >
+                <CurrentLines info={item} navigation={navigation} />
+              </TouchableOpacity>
+            );
+          })
+          : <View style={styles.emptyTextContainer}>
+          <Text style={styles.emptyText} >No vehicle is currently parked.</Text>
+          </View>
+          }
+        </ScrollView>
       </View>
       <Text style={styles.subheader}>Past Parks</Text>
       <ScrollView>
-      {pastParks.map((item) => {
+      {
+          pastParkingData != null && pastParkingData.length !== 0 
+          ? pastParkingData.map((item) => {
             return (
-              <TouchableOpacity key={item.id} onPress={() => navigation.navigate(oldTicketDetailsScreenName, {data: item.id})} >
-                <PastLines info={item} navigation={navigation} />
-              </TouchableOpacity>
-              
+              <TouchableOpacity
+              key={item.id}
+              onPress={() =>
+                navigation.navigate(oldTicketDetailsScreenName, {
+                  data: item.id,
+                })
+              }
+            >
+              <PastLines info={item} navigation={navigation} />
+            </TouchableOpacity>
             );
-          })}
+          })
+          : <View style={styles.emptyTextContainer}>
+          <Text style={styles.emptyText} >No past parking data.</Text>
+          </View>
+          }
       </ScrollView>
     </View>
   );
@@ -98,7 +140,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: "16",
     letterSpacing: "0.3%",
-    marginVertical: 4
+    marginVertical: 4,
   },
   bottomGroup: {
     flexDirection: "row",
@@ -108,6 +150,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     width: "100%",
+    marginBottom: "5%",
   },
   currentHeader: {
     fontSize: 24,
@@ -151,6 +194,19 @@ const styles = StyleSheet.create({
     marginVertical: "10%",
   },
   pastContainer: {
-    marginBottom: "5%"
+    marginBottom: "5%",
+  },
+  emptyText: {
+    fontSize: 14,
+    color: white,
+    fontWeight: "500",
+    letterSpacing: "0.3%",
+  },
+  emptyTextContainer : {
+    width: "100%",
+    display: 'flex',
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: "1%"
   }
 });

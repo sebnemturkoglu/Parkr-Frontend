@@ -1,18 +1,21 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
-import SearchBar from "../components/SearchBar";
+import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useDispatch, useSelector } from "react-redux";
+import { getNearbyPlaces, getSearchPlaces } from "../actions/places";
+import ParkingPlaceCard from "../components/ParkingPlaceCard";
+import SearchBar from "../components/SearchBar";
 import { darkgrey, lime } from "../constants/colors";
 import { parkingdata as data } from "../constants/dummyData";
-import ParkingPlaceCard from "../components/ParkingPlaceCard";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { getNearbyPlaces } from "../actions/places";
+import { mapStackName, mapScreenName } from "../constants/screenNames";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen() {
   const dispatch = useDispatch();
   const [location, setLocation] = useState(null);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
@@ -35,6 +38,11 @@ export default function HomeScreen({ navigation }) {
 
   const places = useSelector((state) => state.places);
 
+  const handleSearch = (latitude, longitude) => {
+    dispatch(getSearchPlaces({ latitude, longitude }));
+    navigation.navigate(mapStackName);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.searchbar}>
@@ -53,6 +61,8 @@ export default function HomeScreen({ navigation }) {
               details.geometry.location.lat,
               details.geometry.location.lng
             );
+            handleSearch(details.geometry.location.lat, details.geometry.location.lng);
+            
           }}
           query={{
             key: "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks",

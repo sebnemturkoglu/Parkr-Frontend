@@ -1,18 +1,30 @@
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { FAB } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import ParkCard from "../components/ParkCard";
-import SearchBar from "../components/SearchBar";
 import { darkgrey, lime, white } from "../constants/colors";
-import { parkingdata as data } from "../constants/dummyData";
-import { mapViewScreenName, placeDetailsScreenName } from "../constants/screenNames";
+import {
+  mapViewScreenName,
+  placeDetailsScreenName,
+} from "../constants/screenNames";
+import { getSearchPlaces } from "../actions/places";
 
 export default function MapScreen({ navigation, route }) {
-
   const dispatch = useDispatch();
   const [location, setLocation] = useState(null);
+
+  const handleSearch = (latitude, longitude) => {
+    dispatch(getSearchPlaces({ latitude, longitude }));
+  };
 
   useEffect(() => {
     (async () => {
@@ -30,29 +42,64 @@ export default function MapScreen({ navigation, route }) {
       });
       setLocation(loc);
     })();
-    
   }, [location]);
 
   const places = useSelector((state) => state.places);
+  const searchData = useSelector((state) => state.searchPlaces);
+
 
   return (
     <View style={styles.container}>
       <View style={styles.searchbar}>
-        <SearchBar />
-        <View style={styles.filterContainer} >
-        <TouchableOpacity style={styles.buttonFilter}>
-        <Text style={styles.buttonTextFilter}>Filter</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonFilter}>
-        <Text style={styles.buttonTextFilter}>Sort</Text>
-      </TouchableOpacity>
-     
+        <GooglePlacesAutocomplete
+          placeholder="Search"
+          fetchDetails={true}
+          GooglePlacesSearchQuery={{
+            rankby: "distance",
+          }}
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            console.log(
+              "Searched place:",
+              details.geometry.location.lat,
+              details.geometry.location.lng
+            );
+            handleSearch(
+              details.geometry.location.lat,
+              details.geometry.location.lng
+            );
+          }}
+          query={{
+            key: "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks",
+            language: "en",
+            components: "country:tr",
+          }}
+          styles={{
+            listView: {
+              backgroundColor: "white",
+              position: "absolute",
+              marginTop: 50,
+              flex: 1,
+            },
+          }}
+        />
+
+
+        </View>
+        <View style={styles.filterContainer}>
+          <TouchableOpacity style={styles.buttonFilter}>
+            <Text style={styles.buttonTextFilter}>Filter</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonFilter}>
+            <Text style={styles.buttonTextFilter}>Sort</Text>
+          </TouchableOpacity>
         </View>
         <Text style={styles.header}>Nearest Parking Places</Text>
         <ScrollView style={styles.scrollView}>
-          {places.map((item) => {
+          {searchData.isSearch && searchData !== null
+          ? searchData.data.map((item) => {
             return (
-              <View style={styles.cardContainer} key={item.id} >
+              <View style={styles.cardContainer} key={item.placeID}>
                 <ParkCard
                   image={item.image}
                   name={item.name}
@@ -61,23 +108,42 @@ export default function MapScreen({ navigation, route }) {
                   rating={item.rating}
                   lowestfare={item.lowestfare}
                   distance={item.distance}
-                  onPress={() => navigation.navigate(placeDetailsScreenName, {data: item})}
+                  onPress={() =>
+                    navigation.navigate(placeDetailsScreenName, { placeID: item.placeID })
+                  }
                 />
               </View>
             );
-          })}
+          })
+        : places.map((item) => {
+          return (
+            <View style={styles.cardContainer} key={item.placeID}>
+              <ParkCard
+                image={item.image}
+                name={item.name}
+                capacity={item.capacity}
+                occupancy={item.occupancy}
+                rating={item.rating}
+                lowestfare={item.lowestfare}
+                distance={item.distance}
+                onPress={() =>
+                  navigation.navigate(placeDetailsScreenName, { placeID: item.placeID })
+                }
+              />
+            </View>
+          );
+        })}
         </ScrollView>
-
-      </View>
-      <View style={styles.fabContainer} >
-          <FAB
+      
+      <View style={styles.fabContainer}>
+        <FAB
           size="small"
           color={darkgrey}
           label="Map View"
           style={styles.fab}
           onPress={() => navigation.navigate(mapViewScreenName)}
         />
-          </View>
+      </View>
     </View>
   );
 }
@@ -88,18 +154,22 @@ const styles = StyleSheet.create({
     backgroundColor: "#1F1F1F",
     height: "100%",
     width: "100%",
-    flex: 1,
+    flex: 0,
+    paddingVertical: 30,
+    paddingHorizontal: 15,
   },
   searchbar: {
     marginVertical: 30,
-    marginHorizontal: 15,
+    flex:0,
+    zIndex:1,
   },
   scrollView: {
+    flex: 0,
     // flex: 1,
-    height:"80%",
+    // height: "80%",
   },
-  scrollContainer:{
-    flex:1
+  scrollContainer: {
+    // flex: 1,
   },
   header: {
     color: lime,
@@ -107,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: "20",
     letterSpacing: "0.3%",
     marginTop: "8%",
-    marginBottom: "3%"
+    marginBottom: "3%",
   },
   cardContainer: {
     marginVertical: "1%",
@@ -115,8 +185,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     marginLeft: 10,
-    // left: 0,
-    bottom: 42,
+    bottom: 0,
     borderRadius: 32,
     backgroundColor: lime,
   },
@@ -131,7 +200,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 24
+    marginTop: 24,
   },
   buttonFilter: {
     width: "48%",
@@ -144,5 +213,6 @@ const styles = StyleSheet.create({
   buttonTextFilter: {
     fontSize: 14,
     color: white,
-  }
+  },
 });
+
