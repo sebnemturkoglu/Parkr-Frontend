@@ -6,12 +6,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  RefreshControl
 } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { FAB } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import ParkCard from "../components/ParkCard";
-import { darkgrey, lime, white } from "../constants/colors";
+import { darkgrey, lime, lime60, white } from "../constants/colors";
 import {
   mapViewScreenName,
   placeDetailsScreenName,
@@ -46,6 +47,15 @@ export default function MapScreen({ navigation, route }) {
 
   const places = useSelector((state) => state.places);
   const searchData = useSelector((state) => state.searchPlaces);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
 
   return (
@@ -95,7 +105,10 @@ export default function MapScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
         <Text style={styles.header}>Nearest Parking Places</Text>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={lime60} colors={lime60} />
+        }>
           {searchData.isSearch && searchData !== null
           ? searchData.data.map((item) => {
             return (

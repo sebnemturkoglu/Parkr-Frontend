@@ -31,7 +31,6 @@ const vehicleTypes = [
   },
 ];
 
-
 export default function EditVehicleInformationScreen({ navigation, route }) {
   const dispatch = useDispatch();
 
@@ -40,7 +39,9 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
   };
 
   const [type, setType] = React.useState(route.params.item.carType);
-  const [licensePlate, setLicensePlate] = React.useState(route.params.item.plate);
+  const [licensePlate, setLicensePlate] = React.useState(
+    route.params.item.plate
+  );
   const [model, setModel] = React.useState(route.params.item.model);
 
   return (
@@ -61,68 +62,100 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
         activeOutlineColor={lime60}
         textColor={white}
         value={licensePlate}
-        onChangeText={licensePlate => setLicensePlate(licensePlate)}
+        onChangeText={(licensePlate) => setLicensePlate(licensePlate)}
       />
-              <TextInput
+      <TextInput
         style={styles.input}
         placeholder={route.params.item.model}
         mode="outlined"
         activeOutlineColor={lime60}
         textColor={white}
         value={model}
-        onChangeText={model => setModel(model)}
+        onChangeText={(model) => setModel(model)}
       />
-    
-    <Text style={styles.subheader} >Edit vehicle type</Text>
-    <RadioButton.Group onValueChange={type => setType(type)} value={type} >
-    {
-        vehicleTypes.map((item) => {
-            return(
-                <View style={styles.radioButton} key={item.id} >
-                <RadioButton.Item label={item.title} value={item.value} color={lime60} labelStyle={type == item.value ? styles.radioButtonTextSelected : styles.radioButtonTextUnselected} />
-                </View>
-            )
-        })
-    }
-    </RadioButton.Group>
 
-    <TouchableOpacity style={styles.button} 
+      <Text style={styles.subheader}>Edit vehicle type</Text>
+      <RadioButton.Group onValueChange={(type) => setType(type)} value={type}>
+        {vehicleTypes.map((item) => {
+          return (
+            <View style={styles.radioButton} key={item.id}>
+              <RadioButton.Item
+                label={item.title}
+                value={item.value}
+                color={lime60}
+                labelStyle={
+                  type == item.value
+                    ? styles.radioButtonTextSelected
+                    : styles.radioButtonTextUnselected
+                }
+              />
+            </View>
+          );
+        })}
+      </RadioButton.Group>
+
+      <TouchableOpacity
+        style={styles.button}
         onPress={() => {
-            Alert.alert("Make Changes", "Are you sure you want to change vehicle?", [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                { text: "OK", onPress:() => {
-                  dispatch(editVehicle({id: route.params.item.id, plate: licensePlate, carType: type, model: model, fuelType: "GASOLINE"}));
+          Alert.alert(
+            "Make Changes",
+            "Are you sure you want to change vehicle?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: () => {
+                  dispatch(
+                    editVehicle({
+                      id: route.params.item.id,
+                      plate: licensePlate,
+                      carType: type,
+                      model: model,
+                      fuelType: "GASOLINE",
+                    })
+                  );
                   navigation.navigate({
                     name: profileScreenName,
-                  })} },
-              ]);
-          }}
-        >
+                  });
+                },
+              },
+            ]
+          );
+        }}
+      >
         <Text style={styles.buttonText}>Make changes</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonDelete} 
+      <TouchableOpacity
+        style={styles.buttonDelete}
         onPress={() => {
-            Alert.alert("Delete Vehicle", "Are you sure you want to delete vehicle?", [
-                {
-                  text: "Cancel",
-                  style: "cancel",
-                },
-                { text: "OK", onPress:() => {
+          Alert.alert(
+            "Delete Vehicle",
+            "Are you sure you want to delete vehicle?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+              {
+                text: "OK",
+                onPress: () => {
                   dispatch(deleteVehicle(route.params.item.id));
                   navigation.navigate({
                     name: profileScreenName,
                     params: { id: route.params.item.id, isDelete: true },
                     merge: true,
-                  })} },
-              ]);
-          }}
-        >
+                  });
+                },
+              },
+            ]
+          );
+        }}
+      >
         <Text style={styles.buttonTextDelete}>Delete vehicle</Text>
       </TouchableOpacity>
-    
     </View>
   );
 }
