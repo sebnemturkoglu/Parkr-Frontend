@@ -23,20 +23,6 @@ const listItems = [
   }
 ];
 
-const myVehiclesInit = [
-  {
-    title: "35 BHG 984",
-    onClick: "",
-    id: 0,
-    type: 'a',
-  },
-  {
-    title: "42 E 1995",
-    onClick: "",
-    id:1,
-    type: 'a',
-  },
-];
 
 export default function ProfileScreen({ navigation, route }) {
 
@@ -48,40 +34,10 @@ export default function ProfileScreen({ navigation, route }) {
 
   const vehicles = useSelector((state) => state.vehicles);
 
-  console.log("vehicles:", vehicles);
-
   const { logout } = useContext(AuthContext);
 
-  const [myVehicles, setMyVehicles] = useState(myVehiclesInit);
 
-  var nextId = 2;
 
-  React.useEffect(() => {
-    if (route.params?.licensePlate && route.params?.licensePlate !=  "" && route.params?.isEdit) {
-      let updatedList = myVehicles.map(item => 
-        {
-          if (item.id == route.params?.id){
-            return {...item, title: route.params?.licensePlate, type: route.params?.vehicleType}; //gets everything that was already in item, and updates "done"
-          }
-          return item; // else return unmodified item 
-        });
-
-      setMyVehicles(updatedList);
-    }
-    else if (route.params?.isDelete) {
-      console.log("is delete");
-      let updatedList = myVehicles.filter(item => 
-        {
-          return item.id != route.params?.id;
-        });
-
-      setMyVehicles(updatedList);
-    }
-    else if (route.params?.licensePlate && route.params?.licensePlate !=  "") {
-      setMyVehicles((items) => [...items, {title: route.params?.licensePlate, onClick: "", id: nextId, type: route.params?.vehicleType }]);
-      nextId++;
-    }
-  }, [route.params?.licensePlate, route.params?.isDelete]);
 
   return (
     <View style={styles.container}>
@@ -112,11 +68,11 @@ export default function ProfileScreen({ navigation, route }) {
 
       <Text style={styles.subheader} >My Vehicles</Text>
       <List.Section>
-        {myVehicles.map((item) => {
+        {vehicles.map((item) => {
           return (
             <TouchableOpacity key={item.id} onPress={() => navigation.navigate(editVehicleInformationScreenName, {item})}>
               <List.Item
-                title={item.title}
+                title={item.plate}
                 titleStyle={styles.listItem}
                 left={() => <List.Icon color={white} icon="car" />}
                 right={() => <List.Icon color={white} icon="chevron-right" />}

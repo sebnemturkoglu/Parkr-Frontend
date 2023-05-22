@@ -11,6 +11,8 @@ import {
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FAB, TextInput, RadioButton } from "react-native-paper";
 import { profileScreenName } from "../constants/screenNames";
+import { useDispatch } from "react-redux";
+import { deleteVehicle } from "../actions/user";
 
 const vehicleTypes = [
   {
@@ -32,6 +34,8 @@ const vehicleTypes = [
 
 
 export default function EditVehicleInformationScreen({ navigation, route }) {
+  const dispatch = useDispatch();
+
   const onBackButtonClick = () => {
     navigation.goBack();
   };
@@ -52,7 +56,7 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
       <Text style={styles.header}>Edit vehicle</Text>
       <TextInput
         style={styles.input}
-        placeholder={route.params.item.title}
+        placeholder={route.params.item.plate}
         mode="outlined"
         activeOutlineColor={lime60}
         textColor={white}
@@ -80,11 +84,10 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
                   text: "Cancel",
                   style: "cancel",
                 },
-                { text: "OK", onPress:() => navigation.navigate({
+                { text: "OK", onPress:() => {
+                  navigation.navigate({
                     name: profileScreenName,
-                    params: { licensePlate: licensePlate, vehicleType: type, id: route.params.item.id, isEdit: true },
-                    merge: true,
-                  }) },
+                  })} },
               ]);
           }}
         >
@@ -97,11 +100,13 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
                   text: "Cancel",
                   style: "cancel",
                 },
-                { text: "OK", onPress:() => navigation.navigate({
+                { text: "OK", onPress:() => {
+                  dispatch(deleteVehicle(route.params.item.id));
+                  navigation.navigate({
                     name: profileScreenName,
                     params: { id: route.params.item.id, isDelete: true },
                     merge: true,
-                  }) },
+                  })} },
               ]);
           }}
         >

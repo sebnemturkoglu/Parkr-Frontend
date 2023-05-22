@@ -30,12 +30,23 @@ export const getVehicles = () => async (dispatch) => {
 	}
 };
 
-export const addVehicle = () => async (dispatch) => {
+export const addVehicle = (req) => async (dispatch) => {
 	try {
+		const res = await API.addVehicle(req);
 		const { data } = await API.getVehicles();
-		console.log("action addVehicle", data);
 		dispatch({ type: "ADD_VEHICLES", payload: data });
 	} catch (error) {
 		console.error("addVehicle Error",error);
+	}
+};
+
+
+export const deleteVehicle = (req) => async (dispatch) => {
+	try {
+		const res = await API.deleteVehicle(req);
+		const { data } = await API.getVehicles();
+		dispatch({ type: "DELETE_VEHICLES", payload: data });
+	} catch (error) {
+		console.error("deleteVehicle Error",error);
 	}
 };

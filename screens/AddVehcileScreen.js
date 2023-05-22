@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
 import {
   darkgrey,
@@ -12,33 +12,41 @@ import { List, Divider } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FAB, TextInput, RadioButton } from "react-native-paper";
 import { profileScreenName } from "../constants/screenNames";
+import { useDispatch } from "react-redux";
+import { addVehicle } from "../actions/user";
 
 const vehicleTypes = [
   {
-    title: "Type A",
-    value: "a",
+    title: "SUV",
+    value: "SUV",
     id: 0,
   },
   {
-    title: "Type B",
-    value: "b",
+    title: "SEDAN",
+    value: "SEDAN",
     id: 1,
   },
   {
-    title: "Type C",
-    value: "c",
+    title: "MINIVAN",
+    value: "MINIVAN",
     id: 2,
   },
 ];
 
 
 export default function AddVehicleScreen({ navigation, route }) {
+
+  const dispatch = useDispatch();
+
   const onBackButtonClick = () => {
     navigation.goBack();
   };
 
-  const [type, setType] = React.useState('a');
+  const [type, setType] = React.useState('SEDAN');
   const [licensePlate, setLicensePlate] = React.useState("");
+  const [model, setModel] = React.useState("");
+
+  
 
   return (
     <View style={styles.container}>
@@ -60,6 +68,15 @@ export default function AddVehicleScreen({ navigation, route }) {
         value={licensePlate}
         onChangeText={licensePlate => setLicensePlate(licensePlate)}
       />
+        <TextInput
+        style={styles.input}
+        placeholder="Vehicle Model"
+        mode="outlined"
+        activeOutlineColor={lime60}
+        textColor={white}
+        value={model}
+        onChangeText={model => setModel(model)}
+      />
     
     <Text style={styles.subheader} >Choose vehicle type</Text>
     <RadioButton.Group onValueChange={type => setType(type)} value={type} >
@@ -76,11 +93,9 @@ export default function AddVehicleScreen({ navigation, route }) {
 
     <TouchableOpacity style={styles.button} 
         onPress={() => {
-            // Pass and merge params back to home screen
+            dispatch(addVehicle({plate: licensePlate, carType: type, model: model, fuelType: "GASOLINE"}));
             navigation.navigate({
               name: profileScreenName,
-              params: { licensePlate: licensePlate, vehicleType: type },
-              merge: true,
             });
           }}
         >

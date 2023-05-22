@@ -59,3 +59,17 @@ export async function addVehicle(data) {
     console.log(error.response.data);
   }
 }
+
+export async function deleteVehicle(id) {
+  const token = await SecureStore.getItemAsync('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.delete(`/users/cars/${id}`, {headers});
+    return response.data;
+
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
