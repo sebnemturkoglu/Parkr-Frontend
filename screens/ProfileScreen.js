@@ -5,6 +5,8 @@ import { List, Divider } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { addVehicleScreenName, editVehicleInformationScreenName } from "../constants/screenNames";
 import { AuthContext } from "../AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { getVehicles } from "../actions/user";
 
 const listItems = [
   {
@@ -37,6 +39,16 @@ const myVehiclesInit = [
 ];
 
 export default function ProfileScreen({ navigation, route }) {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getVehicles());
+  }, []);
+
+  const vehicles = useSelector((state) => state.vehicles);
+
+  console.log("vehicles:", vehicles);
 
   const { logout } = useContext(AuthContext);
 

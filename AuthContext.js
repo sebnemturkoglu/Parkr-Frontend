@@ -25,7 +25,7 @@ const AuthContextProvider = ({ children }) => {
   const register = async (email, password, phone, name) => {
     try {
       const { token } = await dispatch(
-        signUp({ email, password, phone, name, user: "USER" })
+        signUp({ mail: email, password, phone, name, role: "USER" })
       );
       await SecureStore.setItemAsync('token', token);
       setToken(token);

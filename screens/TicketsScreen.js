@@ -9,27 +9,27 @@ import {
   oldTicketDetailsScreenName,
 } from "../constants/screenNames";
 
-currentPark = {
-  name: "Kardeşler Park",
-  startTime: "10.53",
-  fee: "25",
-};
+// currentPark = {
+//   name: "Kardeşler Park",
+//   startTime: "10.53",
+//   fee: "25",
+// };
 
-pastParks = [
-  // {
-  //   id: 1,
-  //   name: "Bilka Park",
-  //   date: "11.11.2022",
-  //   fee: "20",
-  // },
-  // {
-  //   id: 2,
-  //   name: "Kardeşler Park",
-  //   date: "10.11.2022",
-  //   fee: "25",
-  // },
-  // { id: 3, name: "Kardeşler Park", date: "8.11.2022", fee: "25" },
-];
+// pastParks = [
+//   {
+//     id: 1,
+//     name: "Bilka Park",
+//     date: "11.11.2022",
+//     fee: "20",
+//   },
+//   {
+//     id: 2,
+//     name: "Kardeşler Park",
+//     date: "10.11.2022",
+//     fee: "25",
+//   },
+//   { id: 3, name: "Kardeşler Park", date: "8.11.2022", fee: "25" },
+// ];
 
 const PastLines = (props) => (
   <View style={styles.pastContainer}>

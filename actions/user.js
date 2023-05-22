@@ -19,3 +19,23 @@ export const getCurrentParkingData = () => async (dispatch) => {
 		console.error("getCurrentParkingData Error",error);
 	}
 };
+
+export const getVehicles = () => async (dispatch) => {
+	try {
+		const { data } = await API.getVehicles();
+		console.log("action getVehicles", data);
+		dispatch({ type: "GET_VEHICLES", payload: data });
+	} catch (error) {
+		console.error("getVehicles Error",error);
+	}
+};
+
+export const addVehicle = () => async (dispatch) => {
+	try {
+		const { data } = await API.getVehicles();
+		console.log("action addVehicle", data);
+		dispatch({ type: "ADD_VEHICLES", payload: data });
+	} catch (error) {
+		console.error("addVehicle Error",error);
+	}
+};

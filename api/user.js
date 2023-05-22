@@ -31,3 +31,31 @@ export async function getCurrentParking() {
     console.log(error.response.data);
   }
 }
+
+export async function getVehicles() {
+  const token = await SecureStore.getItemAsync('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.get("/users/cars", {headers});
+    return response.data;
+
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
+
+export async function addVehicle(data) {
+  const token = await SecureStore.getItemAsync('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.post("/users/add-vehicle", data, {headers});
+    return response.data;
+
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
