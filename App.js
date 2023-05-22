@@ -9,6 +9,7 @@ import placeDetails from "./reducers/placeDetails";
 import currentParkingData from "./reducers/currentParkingData";
 import pastParkingData from "./reducers/pastParkingData";
 import vehicles from "./reducers/vehicles";
+import recentPlaces from "./reducers/recentPlaces";
 
 const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ const store = configureStore({
     pastParkingData: pastParkingData,
     currentParkingData: currentParkingData,
     vehicles: vehicles,
+    recentPlaces: recentPlaces,
   },
 });
 

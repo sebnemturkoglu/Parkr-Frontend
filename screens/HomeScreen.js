@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNearbyPlaces, getSearchPlaces } from "../actions/places";
 import ParkingPlaceCard from "../components/ParkingPlaceCard";
 import SearchBar from "../components/SearchBar";
-import { darkgrey, lime } from "../constants/colors";
+import { darkgrey, lime, white } from "../constants/colors";
 import { parkingdata as data } from "../constants/dummyData";
 import { mapStackName, mapScreenName } from "../constants/screenNames";
+import { getRecentPlaces } from "../actions/places";
 
 export default function HomeScreen() {
   const dispatch = useDispatch();
@@ -33,10 +34,12 @@ export default function HomeScreen() {
       });
       setLocation(loc);
     })();
-    
+
+    dispatch(getRecentPlaces());
   }, [location]);
 
   const places = useSelector((state) => state.places);
+  const recentPlaces = useSelector((state) => state.recentPlaces);
 
   const handleSearch = (latitude, longitude) => {
     dispatch(getSearchPlaces({ latitude, longitude }));
@@ -61,8 +64,10 @@ export default function HomeScreen() {
               details.geometry.location.lat,
               details.geometry.location.lng
             );
-            handleSearch(details.geometry.location.lat, details.geometry.location.lng);
-            
+            handleSearch(
+              details.geometry.location.lat,
+              details.geometry.location.lng
+            );
           }}
           query={{
             key: "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks",
@@ -101,24 +106,30 @@ export default function HomeScreen() {
       </View>
       <View>
         <Text style={styles.subheader}>Recent Places</Text>
-        <ScrollView horizontal={true}>
-          {data.map((item) => {
-            return (
-              <View style={styles.cardContainer} key={item.id}>
-                <ParkingPlaceCard
-                  image={item.image}
-                  name={item.name}
-                  capacity={item.capacity}
-                  occupancy={item.occupancy}
-                  rating={item.rating}
-                  lowestfare={item.fares[0].fare}
-                  distance={item.distance}
-                  coordinates={item.coordinates}
-                />
-              </View>
-            );
-          })}
-        </ScrollView>
+        {recentPlaces !== null && recentPlaces.length !== 0 ? (
+          <ScrollView horizontal={true}>
+            {recentPlaces.map((item) => {
+              return (
+                <View style={styles.cardContainer} key={item.id}>
+                  <ParkingPlaceCard
+                    image={item.image}
+                    name={item.name}
+                    capacity={item.capacity}
+                    occupancy={item.occupancy}
+                    rating={item.rating}
+                    lowestfare={item.fares[0].fare}
+                    distance={item.distance}
+                    coordinates={item.coordinates}
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+        ) : (
+          <View style={styles.emptyTextContainer}>
+            <Text style={styles.emptyText}>No past parking data.</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -160,5 +171,18 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: 260,
     marginHorizontal: 10,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: white,
+    fontWeight: "500",
+    letterSpacing: "0.3%",
+  },
+  emptyTextContainer: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: "1%",
   },
 });

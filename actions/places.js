@@ -29,3 +29,12 @@ export const getPlaceDetails = (req) => async (dispatch) => {
 		console.error("getPlaceDetails Error",error, req);
 	}
 };
+
+export const getRecentPlaces = () => async (dispatch) => {
+	try {
+		const { data } = await API.getRecentPlaces();
+		dispatch({ type: "GET_RECENT_PLACES", payload: data });
+	} catch (error) {
+		console.error("getRecentPlaces Error",error, req);
+	}
+};

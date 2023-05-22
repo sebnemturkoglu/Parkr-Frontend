@@ -34,4 +34,17 @@ export async function getPlaceDetails(data) {
 }
 
 
-export const getRecentPlaces = (data) => API.post("/parkingLots/recent", data);
+export async function getRecentPlaces() {
+  const token = await SecureStore.getItemAsync('token');
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.post("/users/recent", {headers});
+    console.log(response.data);
+    return response.data;
+
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
