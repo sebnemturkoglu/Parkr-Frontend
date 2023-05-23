@@ -44,6 +44,7 @@ const MapViewScreen = ({ navigation }) => {
   }, []);
 
   const places = useSelector((state) => state.places);
+  const searchData = useSelector((state) => state.searchPlaces);
 
   const onBackButtonClick = () => {
     navigation.goBack();
@@ -52,12 +53,19 @@ const MapViewScreen = ({ navigation }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const onCardPress = () => {
-    console.log("id:", places[0].placeID);
-    navigation.navigate({
-      name: placeDetailsScreenName,
-      params: { id: places[0].placeID },
-      merge: true,
-    });
+    if (searchData.isSearch && searchData !== null) {
+      navigation.navigate({
+        name: placeDetailsScreenName,
+        params: { id: searchData.data[selectedIndex].placeID },
+        merge: true,
+      });
+    } else {
+      navigation.navigate({
+        name: placeDetailsScreenName,
+        params: { id: places.data[selectedIndex].placeID },
+        merge: true,
+      });
+    }
   };
 
   return (
@@ -67,28 +75,53 @@ const MapViewScreen = ({ navigation }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         enabled
       >
-        <View style={styles.container}>
-          <Map
-            multipleMarkers={true}
-            places={places}
-            setSelectedIndex={setSelectedIndex}
-            selectedIndex={selectedIndex}
-          />
-          <View style={styles.cardContainer}>
-            <ParkCard
-              image={places[selectedIndex].image}
-              name={places[selectedIndex].name}
-              capacity={places[selectedIndex].capacity}
-              occupancy={places[selectedIndex].occupancy}
-              rating={places[selectedIndex].rating}
-              lowestfare={places[selectedIndex].lowestFare}
-              distance={places[selectedIndex].distance}
-              onPress={onCardPress}
+        {searchData.isSearch && searchData !== null ? (
+          <View style={styles.container}>
+            <Map
+              multipleMarkers={true}
+              places={searchData.data}
+              setSelectedIndex={setSelectedIndex}
+              selectedIndex={selectedIndex}
             />
-          </View>
+            <View style={styles.cardContainer}>
+              <ParkCard
+                image={searchData.data[selectedIndex].image}
+                name={searchData.data[selectedIndex].name}
+                capacity={searchData.data[selectedIndex].capacity}
+                occupancy={searchData.data[selectedIndex].occupancy}
+                rating={searchData.data[selectedIndex].rating}
+                lowestfare={searchData.data[selectedIndex].lowestFare}
+                distance={searchData.data[selectedIndex].distance}
+                onPress={onCardPress}
+              />
+            </View>
 
-          <BackButton onClick={onBackButtonClick} />
-        </View>
+            <BackButton onClick={onBackButtonClick} />
+          </View>
+        ) : (
+          <View style={styles.container}>
+            <Map
+              multipleMarkers={true}
+              places={places}
+              setSelectedIndex={setSelectedIndex}
+              selectedIndex={selectedIndex}
+            />
+            <View style={styles.cardContainer}>
+              <ParkCard
+                image={places[selectedIndex].image}
+                name={places[selectedIndex].name}
+                capacity={places[selectedIndex].capacity}
+                occupancy={places[selectedIndex].occupancy}
+                rating={places[selectedIndex].rating}
+                lowestfare={places[selectedIndex].lowestFare}
+                distance={places[selectedIndex].distance}
+                onPress={onCardPress}
+              />
+            </View>
+
+            <BackButton onClick={onBackButtonClick} />
+          </View>
+        )}
       </KeyboardAvoidingView>
     </DismissKeyboard>
   );

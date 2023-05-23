@@ -4,17 +4,17 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useDispatch, useSelector } from "react-redux";
-import { getNearbyPlaces, getSearchPlaces } from "../actions/places";
+import {
+  getNearbyPlaces,
+  getRecentPlaces,
+  getSearchPlaces,
+} from "../actions/places";
 import ParkingPlaceCard from "../components/ParkingPlaceCard";
-import SearchBar from "../components/SearchBar";
 import { darkgrey, lime, white } from "../constants/colors";
-import { parkingdata as data } from "../constants/dummyData";
-import { mapStackName, mapScreenName } from "../constants/screenNames";
-import { getRecentPlaces } from "../actions/places";
+import { mapStackName, placeDetailsScreenName } from "../constants/screenNames";
 
 export default function HomeScreen() {
   const dispatch = useDispatch();
-  const [location, setLocation] = useState(null);
 
   const navigation = useNavigation();
 
@@ -100,6 +100,13 @@ export default function HomeScreen() {
                   lowestfare={item.lowestFare}
                   distance={item.distance}
                   coordinates={item.coordinates}
+                  onPress={() => {
+                    navigation.navigate({
+                      name: placeDetailsScreenName,
+                      params: { id: item.placeID },
+                      merge: true,
+                    });
+                  }}
                 />
               </View>
             );
@@ -122,6 +129,13 @@ export default function HomeScreen() {
                     lowestfare={item.fares[0].fare}
                     distance={item.distance}
                     coordinates={item.coordinates}
+                    onPress={() => {
+                      navigation.navigate({
+                        name: placeDetailsScreenName,
+                        params: { id: item.placeID },
+                        merge: true,
+                      });
+                    }}
                   />
                 </View>
               );
