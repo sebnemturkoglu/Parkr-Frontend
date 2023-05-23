@@ -31,6 +31,8 @@ const vehicleTypes = [
   },
 ];
 
+const licensePlateRegex = /^([0-9]{1,2})\s*([A-Z]{1,3})\s*([0-9]{2,4})$/;
+
 export default function EditVehicleInformationScreen({ navigation, route }) {
   const dispatch = useDispatch();
 
@@ -39,10 +41,22 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
   };
 
   const [type, setType] = React.useState(route.params.item.carType);
-  const [licensePlate, setLicensePlate] = React.useState(
-    route.params.item.plate
-  );
+  const [licensePlate, setLicensePlate] = React.useState("");
+  const [isValidLicensePlate, setIsValidLicensePlate] = React.useState(false);
   const [model, setModel] = React.useState(route.params.item.model);
+
+  const originalLicensePlate = route.params.item.plate;
+
+  const formatLicensePlate = (plateNumber) => {
+    const matches = plateNumber.match(licensePlateRegex);
+
+    if (matches) {
+      const [_, firstNumber, characters, secondNumber] = matches;
+      return `${firstNumber} ${characters} ${secondNumber}`;
+    }
+
+    return plateNumber;
+  };
 
   return (
     <View style={styles.container}>
@@ -57,13 +71,24 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
       <Text style={styles.header}>Edit vehicle</Text>
       <TextInput
         style={styles.input}
-        placeholder={route.params.item.plate}
+        placeholder={formatLicensePlate(route.params.item.plate)}
         mode="outlined"
         activeOutlineColor={lime60}
         textColor={white}
-        value={licensePlate}
-        onChangeText={(licensePlate) => setLicensePlate(licensePlate)}
+        value={formatLicensePlate(licensePlate)}
+        onChangeText={(licensePlate) => {
+          licensePlate = licensePlate.toUpperCase();
+          setLicensePlate(licensePlate);
+          if (licensePlateRegex.test(licensePlate)) {
+            setIsValidLicensePlate(true);
+          } else {
+            setIsValidLicensePlate(false);
+          }
+        }}
       />
+      {!isValidLicensePlate && licensePlate ? (
+        <Text style={styles.alert}>Please enter a valid license plate.</Text>
+      ) : null}
       <TextInput
         style={styles.input}
         placeholder={route.params.item.model}
@@ -108,10 +133,14 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
               {
                 text: "OK",
                 onPress: () => {
+                  const plate =
+                    !isValidLicensePlate || !licensePlate
+                      ? originalLicensePlate
+                      : licensePlate;
                   dispatch(
                     editVehicle({
                       id: route.params.item.id,
-                      plate: licensePlate,
+                      plate: plate.replace(/\s/g, ""),
                       carType: type,
                       model: model,
                       fuelType: "GASOLINE",
@@ -249,5 +278,10 @@ const styles = StyleSheet.create({
   },
   radioButtonTextUnselected: {
     color: darkgrey60,
+  },
+  alert: {
+    color: "#e42218",
+    fontSize: "14",
+    letterSpacing: "0.3%",
   },
 });

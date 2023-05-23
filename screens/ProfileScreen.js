@@ -1,9 +1,12 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { darkgrey, darkgrey60, lime, lime60, white } from "../constants/colors";
 import { List, Divider } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { addVehicleScreenName, editVehicleInformationScreenName } from "../constants/screenNames";
+import {
+  addVehicleScreenName,
+  editVehicleInformationScreenName,
+} from "../constants/screenNames";
 import { AuthContext } from "../AuthContext";
 import { useDispatch, useSelector } from "react-redux";
 import { getVehicles } from "../actions/user";
@@ -20,12 +23,12 @@ const listItems = [
     icon: "cog",
     onClick: "",
     id: 1,
-  }
+  },
 ];
 
+const licensePlateRegex = /^([0-9]{1,2})\s*([A-Z]{1,3})\s*([0-9]{2,4})$/;
 
 export default function ProfileScreen({ navigation, route }) {
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -36,8 +39,17 @@ export default function ProfileScreen({ navigation, route }) {
 
   const { logout } = useContext(AuthContext);
 
+  const formatLicensePlate = (plateNumber) => {
+    const matches = plateNumber.match(licensePlateRegex);
 
+    if (matches) {
+      console.log(matches);
+      const [_, firstNumber, characters, secondNumber] = matches;
+      return `${firstNumber} ${characters} ${secondNumber}`;
+    }
 
+    return plateNumber;
+  };
 
   return (
     <View style={styles.container}>
@@ -45,7 +57,7 @@ export default function ProfileScreen({ navigation, route }) {
       <List.Section>
         {listItems.map((item) => {
           return (
-            <TouchableOpacity key={item.id} >
+            <TouchableOpacity key={item.id}>
               <List.Item
                 title={item.title}
                 titleStyle={styles.listItem}
@@ -55,24 +67,32 @@ export default function ProfileScreen({ navigation, route }) {
             </TouchableOpacity>
           );
         })}
-            <TouchableOpacity onPress={() => {logout();}} >
-              <List.Item
-                title="Logout"
-                titleStyle={styles.listItem}
-                left={() => <List.Icon color={white} icon="cog" />}
-                right={() => <List.Icon color={white} icon="chevron-right" />}
-    
-              />
-            </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            logout();
+          }}
+        >
+          <List.Item
+            title="Logout"
+            titleStyle={styles.listItem}
+            left={() => <List.Icon color={white} icon="cog" />}
+            right={() => <List.Icon color={white} icon="chevron-right" />}
+          />
+        </TouchableOpacity>
       </List.Section>
 
-      <Text style={styles.subheader} >My Vehicles</Text>
+      <Text style={styles.subheader}>My Vehicles</Text>
       <List.Section>
         {vehicles.map((item) => {
           return (
-            <TouchableOpacity key={item.id} onPress={() => navigation.navigate(editVehicleInformationScreenName, {item})}>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() =>
+                navigation.navigate(editVehicleInformationScreenName, { item })
+              }
+            >
               <List.Item
-                title={item.plate}
+                title={formatLicensePlate(item.plate)}
                 titleStyle={styles.listItem}
                 left={() => <List.Icon color={white} icon="car" />}
                 right={() => <List.Icon color={white} icon="chevron-right" />}
@@ -80,10 +100,12 @@ export default function ProfileScreen({ navigation, route }) {
             </TouchableOpacity>
           );
         })}
-        <TouchableOpacity style={styles.button} 
-        onPress={() => navigation.navigate(addVehicleScreenName)}>
-        <Text style={styles.buttonText}>Add a vehicle</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate(addVehicleScreenName)}
+        >
+          <Text style={styles.buttonText}>Add a vehicle</Text>
+        </TouchableOpacity>
       </List.Section>
     </View>
   );
@@ -115,7 +137,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: "20",
     letterSpacing: "0.3%",
-    marginVertical: 30
+    marginVertical: 30,
   },
   button: {
     width: "100%",
@@ -128,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 8,
     marginRight: "auto",
-    borderWidth: 1
+    borderWidth: 1,
   },
   buttonText: {
     color: lime,

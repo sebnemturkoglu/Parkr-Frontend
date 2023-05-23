@@ -6,23 +6,33 @@ import { TextInput } from "react-native-paper";
 import { useDispatch } from "react-redux";
 import { AuthContext } from "../AuthContext";
 
+const phoneNumberRegex =
+  /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
 
 const SignUpPage = (props) => {
-
   dispatch = useDispatch();
   const { register } = useContext(AuthContext);
 
-  const[name, setName] = useState('');
-  const[mail, setEmail] = useState('');
-  const[password, setPassword] = useState('');
-  const[phoneNumber, setPhoneNumber] = useState('');
+  const [name, setName] = useState("");
+  const [mail, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isValidPhoneNumber, setIsValidPhoneNumber] = useState(false);
 
+  const handleSubmit = (e) => {
+    register(mail, password, phoneNumber.replace(/\s/g, ""), name);
+  };
 
-const handleSubmit = (e) => {
-  register(mail, password, phoneNumber, name);
-  // dispatch(signUp({...initialBS, name, mail: mail, password, phone: phoneNumber}, props.setIsLoggedIn));
-  // props.setIsLoggedIn(true); // bu her zaman olmayabilir
-};
+  const formatPhoneNumber = (phoneNumber) => {
+    const matches = phoneNumber.match(phoneNumberRegex);
+
+    if (matches) {
+      const [_, a, firstNumber, secondNumber, thirdNumber, b] = matches;
+      return `${firstNumber} ${secondNumber} ${thirdNumber}`;
+    }
+
+    return phoneNumber;
+  };
 
   return (
     <View style={styles.container}>
@@ -41,17 +51,17 @@ const handleSubmit = (e) => {
           </Text>{" "}
         </Text>
         <TextInput
-          name='name'
+          name="name"
           style={styles.input}
           placeholder="Your Name"
           mode="outlined"
           activeOutlineColor={lime60}
           textColor={white}
           value={name}
-          onChangeText={name => setName(name)}
+          onChangeText={(name) => setName(name)}
         />
         <TextInput
-          name='email'
+          name="email"
           style={styles.input}
           placeholder="Email Address"
           keyboardType="email-address"
@@ -59,10 +69,10 @@ const handleSubmit = (e) => {
           activeOutlineColor={lime60}
           textColor={white}
           value={mail}
-          onChangeText={mail => setEmail(mail)}
+          onChangeText={(mail) => setEmail(mail)}
         />
         <TextInput
-          name='password'
+          name="password"
           style={styles.input}
           placeholder="Password"
           keyboardType="email-address"
@@ -70,21 +80,31 @@ const handleSubmit = (e) => {
           activeOutlineColor={lime60}
           textColor={white}
           value={password}
-          onChangeText={password => setPassword(password)}
+          onChangeText={(password) => setPassword(password)}
         />
         <TextInput
-          name='phonenumber'
+          name="phonenumber"
           style={styles.input}
           placeholder="Phone Number"
           keyboardType="phone-pad"
           mode="outlined"
           activeOutlineColor={lime60}
           textColor={white}
-          value={phoneNumber}
-          onChangeText={phoneNumber => setPhoneNumber(phoneNumber)}
+          value={formatPhoneNumber(phoneNumber)}
+          onChangeText={(phoneNumber) => {
+            setPhoneNumber(phoneNumber);
+            formatPhoneNumber(phoneNumber);
+            if (phoneNumberRegex.test(phoneNumber)) {
+              setIsValidPhoneNumber(true);
+            } else {
+              setIsValidPhoneNumber(false);
+            }
+          }}
         />
-        <TouchableOpacity style={styles.button}
-        onPress={handleSubmit}>
+        {!isValidPhoneNumber && phoneNumber ? (
+          <Text style={styles.alert}>Please enter a valid phone number.</Text>
+        ) : null}
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
         <Text style={styles.textCentered}>
@@ -97,76 +117,65 @@ const handleSubmit = (e) => {
 };
 
 const LoginPage = (props) => {
-  
-  const[email, setEmail] = useState('');
-  const[password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const { login } = useContext(AuthContext);
 
+  const handleSubmit = (e) => {
+    login(email, password);
+  };
 
-const handleSubmit = (e) => {
-  login(email, password);
-
-};
-  
   return (
-  <View style={styles.container}>
-    <View style={styles.logoContainer}>
-      <Image style={styles.logo} source={logo} />
-    </View>
-    <View style={styles.contentContainer}>
-      <Text style={styles.header}>Login</Text>
-      <Text style={styles.text}>
-        Don't have an account?{" "}
-        <Text
-          onPress={() => props.setIsSignUp(true)}
-          style={styles.textColored}
-        >
-          Sign up
-        </Text>{" "}
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email Address"
-        keyboardType="email-address"
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-        value={email}
-        onChangeText={email => setEmail(email)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        keyboardType="email-address"
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-        value={password}
-        onChangeText={password => setPassword(password)}
-      />
-      <Text
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image style={styles.logo} source={logo} />
+      </View>
+      <View style={styles.contentContainer}>
+        <Text style={styles.header}>Login</Text>
+        <Text style={styles.text}>
+          Don't have an account?{" "}
+          <Text
+            onPress={() => props.setIsSignUp(true)}
             style={styles.textColored}
           >
-            Forgot your password?
-          </Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleSubmit}
-      >
-        <Text style={styles.buttonText}>Register</Text>
-      </TouchableOpacity>
+            Sign up
+          </Text>{" "}
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          keyboardType="email-address"
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={email}
+          onChangeText={(email) => setEmail(email)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          keyboardType="email-address"
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={password}
+          onChangeText={(password) => setPassword(password)}
+        />
+        <Text style={styles.textColored}>Forgot your password?</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+      </View>
     </View>
-  </View>
-)};
-
-
+  );
+};
 
 export default function SignUpScreen() {
   const [isSignUp, setIsSignUp] = useState(true);
 
   return isSignUp ? (
-    <SignUpPage setIsSignUp={setIsSignUp}  />
+    <SignUpPage setIsSignUp={setIsSignUp} />
   ) : (
     <LoginPage setIsSignUp={setIsSignUp} />
   );
@@ -181,7 +190,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
   },
   logoContainer: {
-    // width: "100%",
     alignItems: "center",
   },
   contentContainer: {
@@ -233,5 +241,10 @@ const styles = StyleSheet.create({
     color: darkgrey,
     fontWeight: "600",
     fontSize: 16,
+  },
+  alert: {
+    color: "#e42218",
+    fontSize: "14",
+    letterSpacing: "0.3%",
   },
 });
