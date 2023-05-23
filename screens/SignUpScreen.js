@@ -77,6 +77,7 @@ const SignUpPage = (props) => {
           placeholder="Password"
           keyboardType="email-address"
           mode="outlined"
+          secureTextEntry={true}
           activeOutlineColor={lime60}
           textColor={white}
           value={password}
@@ -156,6 +157,7 @@ const LoginPage = (props) => {
           style={styles.input}
           placeholder="Password"
           keyboardType="email-address"
+          secureTextEntry={true}
           mode="outlined"
           activeOutlineColor={lime60}
           textColor={white}
