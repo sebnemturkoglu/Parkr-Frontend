@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { FAB } from "react-native-paper";
 import Map from "../components/Map";
@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
 export default function PlaceDetailsScreen({ navigation, route }) {
-
   const dispatch = useDispatch();
 
   const onBackButtonClick = () => {
@@ -18,8 +17,8 @@ export default function PlaceDetailsScreen({ navigation, route }) {
   };
 
   useEffect(() => {
-    const place_id = route.params?.placeID;
-    dispatch(getPlaceDetails({placeID: place_id}));
+    const place_id = route.params?.id;
+    dispatch(getPlaceDetails({ placeID: place_id }));
   }, []);
 
   const placeDetails = useSelector((state) => state.placeDetails);
@@ -36,48 +35,72 @@ export default function PlaceDetailsScreen({ navigation, route }) {
         style={styles.backButton}
         onPress={onBackButtonClick}
       />
-      <View style={styles.mapContainer}>
-        <Map scrollDisabled={true} fixedMarker={true} marker={placeDetails.coordinates} />
-      </View>
-      <Text style={styles.header}>{placeDetails.name}</Text>
-      <Text style={styles.ratingText}>{placeDetails.rating}/5 points</Text>
-      <View style={styles.iconGroupContainer}>
-        <View style={styles.iconGroup}>
-          <Ionicons name="car-sport-sharp" size={16} color={white} />
-          <Text style={styles.iconText}>
-            {placeDetails.occupancy}/{placeDetails.capacity}
-          </Text>
-        </View>
-        <View style={styles.iconGroup}>
-          <Ionicons name="logo-usd" size={16} color={white} />
-          <Text style={styles.iconText}>
-            from {placeDetails.fares ? placeDetails.fares[0].fare : "fare information missing"}
-          </Text>
-        </View>
-      </View>
-      <View style={styles.faresGroup}>
-        <Text style={styles.faresHeader}>Fares</Text>
-        {placeDetails.fares
-        ?placeDetails.fares.map((item) => {
-          key++;
-          return (
-            <View style={styles.fareLineGroup} key={key} > 
-              <Text style={styles.textFares}>{item.range}</Text>
-              <Text style={styles.textFares}>{item.fare}</Text>
+      {placeDetails == null || Object.keys(placeDetails).length === 0 ? null :
+        <View style={styles.container}>
+          <View style={styles.mapContainer}>
+            <Map
+              scrollDisabled={true}
+              fixedMarker={true}
+              marker={placeDetails.coordinates}
+            />
+          </View>
+          <Text style={styles.header}>{placeDetails.name}</Text>
+          <Text style={styles.ratingText}>{placeDetails.rating}/5 points</Text>
+          {
+            placeDetails.hasAggreement
+            ? <View style={styles.iconGroupContainer}>
+            <View style={styles.iconGroup}>
+              <Ionicons name="car-sport-sharp" size={16} color={white} />
+              <Text style={styles.iconText}>
+                {placeDetails.occupancy}/{placeDetails.capacity}
+              </Text>
             </View>
-          );
-        })
-      : <View style={styles.fareLineGroup} key={key} > 
-      <Text style={styles.textFares}>Fare information missing.</Text>
-    </View>}
-      </View>
+            <View style={styles.iconGroup}>
+              <Ionicons name="logo-usd" size={16} color={white} />
+              <Text style={styles.iconText}>
+                from{" "}
+                {placeDetails.fares
+                  ? placeDetails.fares[0].fare
+                  : "fare information missing"}
+              </Text>
+            </View>
+          </View>
+          : null
+          }
+          <View style={styles.faresGroup}>
+            <Text style={styles.faresHeader}>Fares</Text>
+            {
+              placeDetails.hasAggreement
+              ? placeDetails.fares ? (
+                placeDetails.fares.map((item) => {
+                  key++;
+                  return (
+                    <View style={styles.fareLineGroup} key={key}>
+                      <Text style={styles.textFares}>{item.range}</Text>
+                      <Text style={styles.textFares}>{item.fare}</Text>
+                    </View>
+                  );
+                })
+              ) : (
+                <View style={styles.fareLineGroup} key={key}>
+                  <Text style={styles.textFares}>Fare information missing.</Text>
+                </View>
+              )
+              : <View style={styles.fareLineGroup} key={key}>
+              <Text style={styles.textFares}>Does not have agreement.</Text>
+            </View>
+            }
+          </View>
+        </View>
+      }
+
       <View style={styles.fabContainer}>
         <FAB
           size="small"
           color={darkgrey}
           label="Navigate"
           style={styles.fab}
-            onPress={() => navigation.navigate(mapDirecrtionsScreenName)}
+          onPress={() => navigation.navigate(mapDirecrtionsScreenName)}
         />
       </View>
     </View>

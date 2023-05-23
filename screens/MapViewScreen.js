@@ -57,7 +57,12 @@ const MapViewScreen = ({ navigation }) => {
   };
 
   const onCardPress = () => {
-    navigation.navigate(placeDetailsScreenName, {data: data[0]});
+    console.log("id:", places[0].placeID);
+    navigation.navigate({
+      name: placeDetailsScreenName,
+      params: { id: places[0].placeID },
+      merge: true,
+    });
   };
 
   return (
