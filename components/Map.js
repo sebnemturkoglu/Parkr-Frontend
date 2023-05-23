@@ -121,20 +121,20 @@ export default function Map(props) {
   };
 
   const GOOGLE_MAPS_APIKEY = "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks";
- 
+
   return (
     <View style={styles.container}>
       <MapView
         scrollEnabled={props.scrollDisabled ? false : true}
         region={
           props.fixedMarker
-          ? {
+            ? {
                 latitude: props.marker.latitude,
                 longitude: props.marker.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
-          }
-          : (!position
+              }
+            : !position
             ? {
                 latitude: 74,
                 longitude: 18,
@@ -146,34 +146,45 @@ export default function Map(props) {
                 longitude: position.longitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
-              })
+              }
         }
         style={styles.map}
       >
-        {
-          props.fixedMarker
-          ? <MapMarkers position={props.marker} />
-          : (
-            props.multipleMarkers
-            ? props.places.map((item) => {
-              return (
-                <MapMarkers position={item.coordinates} key={item.placeID} />
-              );
-            })
-            : <MapMarkers position={position} />
-          )
-        }
-        {
-          props.directions
-          ?   <MapViewDirections
-          origin={props.origin}
-          destination={props.destination}
-          apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={3}
-    strokeColor={darkgrey}
-        />
-        : null
-        }
+        {props.fixedMarker ? (
+          <MapMarkers
+            position={props.marker}
+            hasAgreement={props.hasAgreement}
+            availability={props.availability}
+            selected={true}
+          />
+        ) : props.multipleMarkers ? (
+          props.places.map((item, index) => {
+            return (
+              <MapMarkers
+                position={item.coordinates}
+                key={item.placeID}
+                index={index}
+                hasAgreement={item.hasAggreement}
+                availability={
+                  item.hasAggreement ? item.capacity - item.occupancy : -1
+                }
+                setSelectedIndex={props.setSelectedIndex}
+                selectedIndex={props.selectedIndex}
+              />
+            );
+          })
+        ) : (
+          <MapMarkers position={position} />
+        )}
+        {props.directions ? (
+          <MapViewDirections
+            origin={props.origin}
+            destination={props.destination}
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeWidth={3}
+            strokeColor={darkgrey}
+          />
+        ) : null}
       </MapView>
     </View>
   );

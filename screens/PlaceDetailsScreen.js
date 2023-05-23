@@ -22,8 +22,7 @@ export default function PlaceDetailsScreen({ navigation, route }) {
   }, []);
 
   const placeDetails = useSelector((state) => state.placeDetails);
-
-  let key = 0;
+  console.log("place details", placeDetails);
 
   return (
     <View style={styles.container}>
@@ -35,64 +34,69 @@ export default function PlaceDetailsScreen({ navigation, route }) {
         style={styles.backButton}
         onPress={onBackButtonClick}
       />
-      {placeDetails == null || Object.keys(placeDetails).length === 0 ? null :
+      {placeDetails == null || Object.keys(placeDetails).length === 0 ? null : (
         <View style={styles.container}>
           <View style={styles.mapContainer}>
             <Map
               scrollDisabled={true}
               fixedMarker={true}
               marker={placeDetails.coordinates}
+              hasAgreement={placeDetails.hasAggreement}
+              availability={
+                placeDetails.hasAggreement
+                  ? placeDetails.capacity - placeDetails.occupancy
+                  : -1
+              }
             />
           </View>
           <Text style={styles.header}>{placeDetails.name}</Text>
           <Text style={styles.ratingText}>{placeDetails.rating}/5 points</Text>
-          {
-            placeDetails.hasAggreement
-            ? <View style={styles.iconGroupContainer}>
-            <View style={styles.iconGroup}>
-              <Ionicons name="car-sport-sharp" size={16} color={white} />
-              <Text style={styles.iconText}>
-                {placeDetails.occupancy}/{placeDetails.capacity}
-              </Text>
+          {placeDetails.hasAggreement ? (
+            <View style={styles.iconGroupContainer}>
+              <View style={styles.iconGroup}>
+                <Ionicons name="car-sport-sharp" size={16} color={white} />
+                <Text style={styles.iconText}>
+                  {placeDetails.occupancy}/{placeDetails.capacity}
+                </Text>
+              </View>
+              <View style={styles.iconGroup}>
+                <Ionicons name="logo-usd" size={16} color={white} />
+                <Text style={styles.iconText}>
+                  from{" "}
+                  {placeDetails.fares
+                    ? placeDetails.lowestFare + "₺"
+                    : "fare information missing"}
+                </Text>
+              </View>
             </View>
-            <View style={styles.iconGroup}>
-              <Ionicons name="logo-usd" size={16} color={white} />
-              <Text style={styles.iconText}>
-                from{" "}
-                {placeDetails.fares
-                  ? placeDetails.fares[0].fare
-                  : "fare information missing"}
-              </Text>
-            </View>
-          </View>
-          : null
-          }
+          ) : null}
           <View style={styles.faresGroup}>
             <Text style={styles.faresHeader}>Fares</Text>
-            {
-              placeDetails.hasAggreement
-              ? placeDetails.fares ? (
-                placeDetails.fares.map((item) => {
-                  key++;
-                  return (
-                    <View style={styles.fareLineGroup} key={key}>
-                      <Text style={styles.textFares}>{item.range}</Text>
-                      <Text style={styles.textFares}>{item.fare}</Text>
-                    </View>
-                  );
-                })
+            {placeDetails.hasAggreement ? (
+              placeDetails.fares ? (
+                Object.keys(placeDetails.fares).map((field, index) => (
+                  <View style={styles.fareLineGroup} key={index}>
+                    <Text style={styles.textFares}>{field}</Text>
+                    <Text style={styles.textFares}>
+                      {placeDetails.fares[field]}₺
+                    </Text>
+                  </View>
+                ))
               ) : (
                 <View style={styles.fareLineGroup} key={key}>
-                  <Text style={styles.textFares}>Fare information missing.</Text>
+                  <Text style={styles.textFares}>
+                    Fare information missing.
+                  </Text>
                 </View>
               )
-              : <View style={styles.fareLineGroup} key={key}>
-              <Text style={styles.textFares}>Does not have agreement.</Text>
-            </View>
-            }
+            ) : (
+              <View style={styles.fareLineGroup} key={key}>
+                <Text style={styles.textFares}>Does not have agreement.</Text>
+              </View>
+            )}
           </View>
         </View>
-      }
+      )}
 
       <View style={styles.fabContainer}>
         <FAB
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "center",
-    bottom: 0,
+    bottom: 100,
   },
   backButton: {
     position: "absolute",

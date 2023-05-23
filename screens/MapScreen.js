@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  RefreshControl
+  RefreshControl,
 } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { FAB } from "react-native-paper";
@@ -57,7 +57,6 @@ export default function MapScreen({ navigation, route }) {
     }, 2000);
   }, []);
 
-
   return (
     <View style={styles.container}>
       <View style={styles.searchbar}>
@@ -93,62 +92,74 @@ export default function MapScreen({ navigation, route }) {
             },
           }}
         />
-
-
-        </View>
-        <View style={styles.filterContainer}>
-          <TouchableOpacity style={styles.buttonFilter}>
-            <Text style={styles.buttonTextFilter}>Filter</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buttonFilter}>
-            <Text style={styles.buttonTextFilter}>Sort</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.header}>Nearest Parking Places</Text>
-        <ScrollView style={styles.scrollView}
+      </View>
+      <View style={styles.filterContainer}>
+        <TouchableOpacity style={styles.buttonFilter}>
+          <Text style={styles.buttonTextFilter}>Filter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buttonFilter}>
+          <Text style={styles.buttonTextFilter}>Sort</Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.header}>Nearest Parking Places</Text>
+      <ScrollView
+        style={styles.scrollView}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={lime60} colors={lime60} />
-        }>
-          {searchData.isSearch && searchData !== null
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={lime60}
+            colors={lime60}
+          />
+        }
+      >
+        {searchData.isSearch && searchData !== null
           ? searchData.data.map((item) => {
-            return (
-              <View style={styles.cardContainer} key={item.placeID}>
-                <ParkCard
-                  image={item.image}
-                  name={item.name}
-                  capacity={item.capacity}
-                  occupancy={item.occupancy}
-                  rating={item.rating}
-                  lowestfare={item.lowestfare}
-                  distance={item.distance}
-                  hasAgreement={item.hasAggreement}
-                  onPress={() =>
-                    navigation.navigate(placeDetailsScreenName, { placeID: item.placeID })
-                  }
-                />
-              </View>
-            );
-          })
-        : places.map((item) => {
-          return (
-            <View style={styles.cardContainer} key={item.placeID}>
-              <ParkCard
-                image={item.image}
-                name={item.name}
-                capacity={item.capacity}
-                occupancy={item.occupancy}
-                rating={item.rating}
-                lowestfare={item.lowestfare}
-                distance={item.distance}
-                onPress={() =>
-                  navigation.navigate(placeDetailsScreenName, { placeID: item.placeID })
-                }
-              />
-            </View>
-          );
-        })}
-        </ScrollView>
-      
+              return (
+                <View style={styles.cardContainer} key={item.placeID}>
+                  <ParkCard
+                    image={item.image}
+                    name={item.name}
+                    capacity={item.capacity}
+                    occupancy={item.occupancy}
+                    rating={item.rating}
+                    lowestfare={item.lowestfare}
+                    distance={item.distance}
+                    hasAgreement={item.hasAggreement}
+                    onPress={() => {
+                      console.log("id:", places[0].placeID);
+                      navigation.navigate({
+                        name: placeDetailsScreenName,
+                        params: { id: item.placeID },
+                        merge: true,
+                      });
+                    }}
+                  />
+                </View>
+              );
+            })
+          : places.map((item) => {
+              return (
+                <View style={styles.cardContainer} key={item.placeID}>
+                  <ParkCard
+                    image={item.image}
+                    name={item.name}
+                    capacity={item.capacity}
+                    occupancy={item.occupancy}
+                    rating={item.rating}
+                    lowestfare={item.lowestfare}
+                    distance={item.distance}
+                    onPress={() =>
+                      navigation.navigate(placeDetailsScreenName, {
+                        placeID: item.placeID,
+                      })
+                    }
+                  />
+                </View>
+              );
+            })}
+      </ScrollView>
+
       <View style={styles.fabContainer}>
         <FAB
           size="small"
@@ -174,8 +185,8 @@ const styles = StyleSheet.create({
   },
   searchbar: {
     marginVertical: 30,
-    flex:0,
-    zIndex:1,
+    flex: 0,
+    zIndex: 1,
   },
   scrollView: {
     flex: 0,
@@ -229,4 +240,3 @@ const styles = StyleSheet.create({
     color: white,
   },
 });
-
