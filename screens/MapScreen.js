@@ -1,5 +1,5 @@
 import * as Location from "expo-location";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -18,10 +18,13 @@ import {
   placeDetailsScreenName,
 } from "../constants/screenNames";
 import { getSearchPlaces } from "../actions/places";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { makeSearchFalse } from "../actions/places";
 
 export default function MapScreen({ navigation, route }) {
   const dispatch = useDispatch();
   const [location, setLocation] = useState(null);
+  const ref = useRef();
 
   const handleSearch = (latitude, longitude) => {
     dispatch(getSearchPlaces({ latitude, longitude }));
@@ -63,6 +66,27 @@ export default function MapScreen({ navigation, route }) {
         <GooglePlacesAutocomplete
           placeholder="Search"
           fetchDetails={true}
+          ref={ref}
+          renderRightButton={() => (
+            <TouchableOpacity
+              onPress={() => {
+                ref.current.setAddressText("");
+                dispatch(makeSearchFalse());
+              }}
+            >
+              <View
+                style={{
+                  height: 24,
+                  width: 24,
+                  padding: 2,
+                  marginTop: 10,
+                  marginLeft: 4,
+                }}
+              >
+                <Ionicons name="close-circle" size={20} color={lime} />
+              </View>
+            </TouchableOpacity>
+          )}
           GooglePlacesSearchQuery={{
             rankby: "distance",
           }}
