@@ -26,7 +26,9 @@ export default function HomeScreen() {
         return;
       }
 
-      let loc = await Location.getCurrentPositionAsync({}).then((locVal) => {
+      let loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Low,
+      }).then((locVal) => {
         let latitude = locVal.coords.latitude;
         let longitude = locVal.coords.longitude;
         console.log("loca values", { latitude, longitude });
@@ -36,7 +38,7 @@ export default function HomeScreen() {
     })();
 
     dispatch(getRecentPlaces());
-  }, [location]);
+  }, []);
 
   const places = useSelector((state) => state.places);
   const recentPlaces = useSelector((state) => state.recentPlaces);

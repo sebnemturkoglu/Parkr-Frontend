@@ -127,7 +127,6 @@ export default function MapScreen({ navigation, route }) {
                     distance={item.distance}
                     hasAgreement={item.hasAggreement}
                     onPress={() => {
-                      console.log("id:", places[0].placeID);
                       navigation.navigate({
                         name: placeDetailsScreenName,
                         params: { id: item.placeID },
@@ -150,8 +149,10 @@ export default function MapScreen({ navigation, route }) {
                     lowestfare={item.lowestfare}
                     distance={item.distance}
                     onPress={() =>
-                      navigation.navigate(placeDetailsScreenName, {
-                        placeID: item.placeID,
+                      navigation.navigate({
+                        name: placeDetailsScreenName,
+                        params: { id: item.placeID },
+                        merge: true,
                       })
                     }
                   />

@@ -1,5 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useEffect, useState } from "react";
+import * as Location from "expo-location";
 import { StyleSheet, Text, View } from "react-native";
 import { FAB } from "react-native-paper";
 import Map from "../components/Map";
@@ -8,6 +9,7 @@ import { mapDirecrtionsScreenName } from "../constants/screenNames";
 import { getPlaceDetails } from "../actions/places";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import { getRoutes } from "../actions/routes";
 
 export default function PlaceDetailsScreen({ navigation, route }) {
   const dispatch = useDispatch();
@@ -23,6 +25,27 @@ export default function PlaceDetailsScreen({ navigation, route }) {
 
   const placeDetails = useSelector((state) => state.placeDetails);
   console.log("place details", placeDetails);
+
+  const onClickNavigate = async () => {
+    console.log("clicked");
+    let loc = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Low,
+    }).then((locVal) => {
+      let latitude = locVal.coords.latitude;
+      let longitude = locVal.coords.longitude;
+
+      dispatch(
+        getRoutes({
+          originLatitude: latitude,
+          originLongitude: longitude,
+          destinationPlaceID: placeDetails.placeID,
+          carID: -1,
+        })
+      );
+
+      navigation.navigate(mapDirecrtionsScreenName);
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -83,14 +106,14 @@ export default function PlaceDetailsScreen({ navigation, route }) {
                   </View>
                 ))
               ) : (
-                <View style={styles.fareLineGroup} key={key}>
+                <View style={styles.fareLineGroup}>
                   <Text style={styles.textFares}>
                     Fare information missing.
                   </Text>
                 </View>
               )
             ) : (
-              <View style={styles.fareLineGroup} key={key}>
+              <View style={styles.fareLineGroup}>
                 <Text style={styles.textFares}>Does not have agreement.</Text>
               </View>
             )}
@@ -104,7 +127,7 @@ export default function PlaceDetailsScreen({ navigation, route }) {
           color={darkgrey}
           label="Navigate"
           style={styles.fab}
-          onPress={() => navigation.navigate(mapDirecrtionsScreenName)}
+          onPress={onClickNavigate}
         />
       </View>
     </View>

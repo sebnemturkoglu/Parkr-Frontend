@@ -1,8 +1,12 @@
+import Polyline from "@mapbox/polyline";
 import * as React from "react";
-import Map from "../components/Map";
-import { StyleSheet, View, Text, Alert } from "react-native";
+import { useState } from "react";
+import { Alert, StyleSheet, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 import BackButton from "../components/BackButton";
+import Map from "../components/Map";
 import { darkgrey60, lime, lime60, white } from "../constants/colors";
+import { useEffect } from "react";
 
 const timeData = {
   name: "Kardeşler Park",
@@ -14,16 +18,35 @@ const timeData = {
 };
 
 const MapDirectionsScreen = ({ navigation }) => {
-  const [isFull, setIsFull] = React.useState(false);
+  const [isFull, setIsFull] = useState(false);
+  const [coords, setCoords] = React.useState([]);
 
-  const origin = { latitude: 39.795480, longitude: 32.712426 };
+  const origin = { latitude: 39.79548, longitude: 32.712426 };
   const destination = { latitude: 39.866797, longitude: 32.758669 };
+  const route = useSelector((state) => state.route);
 
   // React.useEffect(() => {
   //   setTimeout(() => {
   //     setIsFull(true);
   //   }, 5000);
   // });
+
+  useEffect(() => {
+    console.log("route", route);
+
+    if (route != null && route.length !== 0) {
+      let points = Polyline.decode(route[0].polyline);
+      let coordinates = points.map((point, index) => {
+        return {
+          latitude: point[0],
+          longitude: point[1],
+        };
+      });
+
+      setCoords(coordinates);
+      console.log(coords);
+    }
+  }, [route]);
 
   const onBackButtonClick = () => {
     Alert.alert("Quit Route", "Do you want to quit the directions page?", [
@@ -37,7 +60,12 @@ const MapDirectionsScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Map origin={origin} destination={destination} directions={true} />
+      <Map
+        origin={origin}
+        destination={destination}
+        directions={true}
+        coordinates={coords}
+      />
       <View style={styles.textGroupContainer}>
         <View style={styles.textGroup}>
           <Text style={styles.mainText}>{timeData.reaminingTime}</Text>

@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import * as TaskManager from "expo-task-manager";
 import * as Location from "expo-location";
 import MapView from "react-native-maps";
+import { Polyline } from "react-native-maps";
 import MapMarkers from "./MapMarkers";
 import MapViewDirections from "react-native-maps-directions";
 import { darkgrey, lime } from "../constants/colors";
@@ -120,6 +121,8 @@ export default function Map(props) {
     }
   };
 
+  // console.log("coordinates in map", props.coordinates);
+
   const GOOGLE_MAPS_APIKEY = "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks";
 
   return (
@@ -177,10 +180,8 @@ export default function Map(props) {
           <MapMarkers position={position} />
         )}
         {props.directions ? (
-          <MapViewDirections
-            origin={props.origin}
-            destination={props.destination}
-            apikey={GOOGLE_MAPS_APIKEY}
+          <Polyline
+            coordinates={props.coordinates}
             strokeWidth={3}
             strokeColor={darkgrey}
           />
