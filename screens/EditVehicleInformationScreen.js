@@ -1,5 +1,6 @@
-import React from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import React, { useState } from "react";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FAB, RadioButton, TextInput } from "react-native-paper";
 import { useDispatch } from "react-redux";
@@ -29,6 +30,64 @@ const vehicleTypes = [
     value: "MINIVAN",
     id: 2,
   },
+  {
+    title: "HATHCHBACK",
+    value: "HATHCHBACK",
+    id: 3,
+  },
+  {
+    title: "CROSSOVER",
+    value: "CROSSOVER",
+    id: 4,
+  },
+  {
+    title: "CONVERTIBLE",
+    value: "CONVERTIBLE",
+    id: 5,
+  },
+  {
+    title: "SPORTSCAR",
+    value: "SPORTSCAR",
+    id: 6,
+  },
+  {
+    title: "COUPE",
+    value: "COUPE",
+    id: 7,
+  },
+  {
+    title: "STATION WAGON",
+    value: "STATIONWAGON",
+    id: 8,
+  },
+  {
+    title: "PICKUP TRUCK",
+    value: "PICKUPTRUCK",
+    id: 9,
+  },
+];
+
+const fuelTypes = [
+  {
+    title: "DIESEL",
+    value: "DIESEL",
+    id: 0,
+  },
+  {
+    title: "GASOLINE",
+    value: "GASOLINE",
+    id: 1,
+  },
+  {
+    title: "HYBRID",
+    value: "HYBRID",
+    id: 2,
+  },
+  {
+    title: "ELECTRIC",
+    value: "ELECTRIC",
+    id: 3,
+  },
 ];
 
 const licensePlateRegex = /^([0-9]{1,2})\s*([A-Z]{1,3})\s*([0-9]{2,4})$/;
@@ -36,16 +95,27 @@ const licensePlateRegex = /^([0-9]{1,2})\s*([A-Z]{1,3})\s*([0-9]{2,4})$/;
 export default function EditVehicleInformationScreen({ navigation, route }) {
   const dispatch = useDispatch();
 
-  const onBackButtonClick = () => {
-    navigation.goBack();
-  };
-
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [fuelPickerOpen, setFuelPickerOpen] = useState(false);
   const [type, setType] = React.useState(route.params.item.carType);
+  const [fuelType, setFuelType] = React.useState(route.params.item.fuelType);
   const [licensePlate, setLicensePlate] = React.useState("");
   const [isValidLicensePlate, setIsValidLicensePlate] = React.useState(false);
   const [model, setModel] = React.useState(route.params.item.model);
 
   const originalLicensePlate = route.params.item.plate;
+
+  const onBackButtonClick = () => {
+    navigation.goBack();
+  };
+
+  const togglePicker = () => {
+    setPickerOpen(!pickerOpen);
+  };
+
+  const toggleFuelPicker = () => {
+    setFuelPickerOpen(!fuelPickerOpen);
+  };
 
   const formatLicensePlate = (plateNumber) => {
     const matches = plateNumber.match(licensePlateRegex);
@@ -68,123 +138,190 @@ export default function EditVehicleInformationScreen({ navigation, route }) {
         style={styles.backButton}
         onPress={onBackButtonClick}
       />
-      <Text style={styles.header}>Edit vehicle</Text>
-      <TextInput
-        style={styles.input}
-        placeholder={formatLicensePlate(route.params.item.plate)}
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-        value={formatLicensePlate(licensePlate)}
-        onChangeText={(licensePlate) => {
-          licensePlate = licensePlate.toUpperCase();
-          setLicensePlate(licensePlate);
-          if (licensePlateRegex.test(licensePlate)) {
-            setIsValidLicensePlate(true);
-          } else {
-            setIsValidLicensePlate(false);
-          }
-        }}
-      />
-      {!isValidLicensePlate && licensePlate ? (
-        <Text style={styles.alert}>Please enter a valid license plate.</Text>
-      ) : null}
-      <TextInput
-        style={styles.input}
-        placeholder={route.params.item.model}
-        mode="outlined"
-        activeOutlineColor={lime60}
-        textColor={white}
-        value={model}
-        onChangeText={(model) => setModel(model)}
-      />
+      <ScrollView>
+        <Text style={styles.header}>Edit vehicle</Text>
+        <TextInput
+          style={styles.input}
+          placeholder={formatLicensePlate(route.params.item.plate)}
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={formatLicensePlate(licensePlate)}
+          onChangeText={(licensePlate) => {
+            licensePlate = licensePlate.toUpperCase();
+            setLicensePlate(licensePlate);
+            if (licensePlateRegex.test(licensePlate)) {
+              setIsValidLicensePlate(true);
+            } else {
+              setIsValidLicensePlate(false);
+            }
+          }}
+        />
+        {!isValidLicensePlate && licensePlate ? (
+          <Text style={styles.alert}>Please enter a valid license plate.</Text>
+        ) : null}
+        <TextInput
+          style={styles.input}
+          placeholder={route.params.item.model}
+          mode="outlined"
+          activeOutlineColor={lime60}
+          textColor={white}
+          value={model}
+          onChangeText={(model) => setModel(model)}
+        />
 
-      <Text style={styles.subheader}>Edit vehicle type</Text>
-      <RadioButton.Group onValueChange={(type) => setType(type)} value={type}>
-        {vehicleTypes.map((item) => {
-          return (
-            <View style={styles.radioButton} key={item.id}>
-              <RadioButton.Item
-                label={item.title}
-                value={item.value}
-                color={lime60}
-                labelStyle={
-                  type == item.value
-                    ? styles.radioButtonTextSelected
-                    : styles.radioButtonTextUnselected
-                }
-              />
-            </View>
-          );
-        })}
-      </RadioButton.Group>
+        <Text style={styles.subheader}>Edit vehicle type</Text>
+        <RadioButton.Group
+          onValueChange={(type) => {
+            setType(type);
+            togglePicker();
+          }}
+          value={type}
+        >
+          <View style={styles.radioButton}>
+            <RadioButton.Item
+              label={type}
+              value={type}
+              color={lime60}
+              labelStyle={styles.radioButtonTextSelected}
+            />
+          </View>
+        </RadioButton.Group>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          Alert.alert(
-            "Make Changes",
-            "Are you sure you want to change vehicle?",
-            [
-              {
-                text: "Cancel",
-                style: "cancel",
-              },
-              {
-                text: "OK",
-                onPress: () => {
-                  const plate =
-                    !isValidLicensePlate || !licensePlate
-                      ? originalLicensePlate
-                      : licensePlate;
-                  dispatch(
-                    editVehicle({
-                      id: route.params.item.id,
-                      plate: plate.replace(/\s/g, ""),
-                      carType: type,
-                      model: model,
-                      fuelType: "GASOLINE",
-                    })
-                  );
-                  navigation.navigate({
-                    name: profileScreenName,
-                  });
+        {pickerOpen ? (
+          <Picker
+            selectedValue={type}
+            onValueChange={(itemValue, itemIndex) => setType(itemValue)}
+            style={{ fontSize: 16 }}
+            itemStyle={{ fontSize: 16 }}
+          >
+            {vehicleTypes.map((item) => {
+              return (
+                <Picker.Item
+                  label={item.title}
+                  value={item.value}
+                  color={lime60}
+                  labelStyle={
+                    type == item.value
+                      ? styles.radioButtonTextSelected
+                      : styles.radioButtonTextUnselected
+                  }
+                />
+              );
+            })}
+          </Picker>
+        ) : null}
+
+        <Text style={styles.subheader}>Choose fuel type</Text>
+
+        <RadioButton.Group
+          onValueChange={(fuelType) => {
+            setFuelType(fuelType);
+            toggleFuelPicker();
+          }}
+          value={fuelType}
+        >
+          <View style={styles.radioButton}>
+            <RadioButton.Item
+              label={fuelType}
+              value={fuelType}
+              color={lime60}
+              labelStyle={styles.radioButtonTextSelected}
+            />
+          </View>
+        </RadioButton.Group>
+
+        {fuelPickerOpen ? (
+          <Picker
+            selectedValue={fuelType}
+            onValueChange={(itemValue, itemIndex) => setFuelType(itemValue)}
+            style={{ fontSize: 16 }}
+            itemStyle={{ fontSize: 16 }}
+          >
+            {fuelTypes.map((item) => {
+              return (
+                <Picker.Item
+                  label={item.title}
+                  value={item.value}
+                  color={lime60}
+                  labelStyle={
+                    type == item.value
+                      ? styles.radioButtonTextSelected
+                      : styles.radioButtonTextUnselected
+                  }
+                />
+              );
+            })}
+          </Picker>
+        ) : null}
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            Alert.alert(
+              "Make Changes",
+              "Are you sure you want to change vehicle?",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
                 },
-              },
-            ]
-          );
-        }}
-      >
-        <Text style={styles.buttonText}>Make changes</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonDelete}
-        onPress={() => {
-          Alert.alert(
-            "Delete Vehicle",
-            "Are you sure you want to delete vehicle?",
-            [
-              {
-                text: "Cancel",
-                style: "cancel",
-              },
-              {
-                text: "OK",
-                onPress: () => {
-                  dispatch(deleteVehicle(route.params.item.id));
-                  navigation.navigate({
-                    name: profileScreenName,
-                    params: { id: route.params.item.id, isDelete: true },
-                    merge: true,
-                  });
+                {
+                  text: "OK",
+                  onPress: () => {
+                    const plate =
+                      !isValidLicensePlate || !licensePlate
+                        ? originalLicensePlate
+                        : licensePlate;
+                    dispatch(
+                      editVehicle({
+                        id: route.params.item.id,
+                        plate: plate.replace(/\s/g, ""),
+                        carType: type,
+                        model: model,
+                        fuelType: fuelType,
+                      })
+                    );
+                    navigation.navigate({
+                      name: profileScreenName,
+                    });
+                  },
                 },
-              },
-            ]
-          );
-        }}
-      >
-        <Text style={styles.buttonTextDelete}>Delete vehicle</Text>
-      </TouchableOpacity>
+              ]
+            );
+          }}
+        >
+          <Text style={styles.buttonText}>Make changes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonDelete}
+          onPress={() => {
+            Alert.alert(
+              "Delete Vehicle",
+              "Are you sure you want to delete vehicle?",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: () => {
+                    dispatch(deleteVehicle(route.params.item.id));
+                    navigation.navigate({
+                      name: profileScreenName,
+                      params: { id: route.params.item.id, isDelete: true },
+                      merge: true,
+                    });
+                  },
+                },
+              ]
+            );
+          }}
+        >
+          <Text style={styles.buttonTextDelete}>Delete vehicle</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 }
