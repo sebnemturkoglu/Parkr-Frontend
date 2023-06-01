@@ -11,6 +11,7 @@ import pastParkingData from "./reducers/pastParkingData";
 import vehicles from "./reducers/vehicles";
 import recentPlaces from "./reducers/recentPlaces";
 import routeReducer from "./reducers/routes";
+import loadReducer from "./reducers/loadReducer";
 import { LogBox } from "react-native";
 
 LogBox.ignoreAllLogs();
@@ -26,6 +27,7 @@ const store = configureStore({
     vehicles: vehicles,
     recentPlaces: recentPlaces,
     route: routeReducer,
+    loaded: loadReducer,
   },
 });
 

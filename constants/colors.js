@@ -4,3 +4,6 @@ export const white = "#FDFDFF";
 export const lime = "#D9FE54";
 export const lime60 = "#EDFFAE";
 export const darkgrey40 = "#909090";
+export const alert = "#EB4A47";
+export const ok = "#8ECA3F";
+export const warning = "#FDB321";

@@ -4,7 +4,6 @@ import { darkgrey, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function ParkCard(props) {
-
   return (
     <TouchableOpacity activeOpacity={0.7} onPress={props.onPress}>
       <View style={styles.container}>
@@ -13,13 +12,20 @@ export default function ParkCard(props) {
             <View style={styles.headerGroup}>
               <Text style={styles.textHeader}>{props.name}</Text>
               <Text style={styles.textBody}>{props.distance} km</Text>
-              {
-                props.hasAgreement
-                ? <Ionicons name="heart" size={16} color={lime} style={styles.chip} />
-                : null
-              }
+              {props.hasAgreement ? (
+                <Ionicons
+                  name="heart"
+                  size={16}
+                  color={lime}
+                  style={styles.chip}
+                />
+              ) : null}
             </View>
-            <Text style={styles.textBody}>{props.rating}/5 points</Text>
+            <Text style={styles.textBody}>
+              {props.numOfRatings === 0
+                ? "Not rated."
+                : props.rating + "/5 points"}
+            </Text>
           </View>
           {props.hasAgreement ? (
             <View style={styles.iconGroupContainer}>
@@ -31,7 +37,11 @@ export default function ParkCard(props) {
               </View>
               <View style={styles.iconGroup}>
                 <Ionicons name="logo-usd" size={16} color={white} />
-                <Text style={styles.iconText}>from {props.lowestfare}</Text>
+                <Text style={styles.iconText}>
+                  {props.lowestfare === 0
+                    ? "Free"
+                    : "from " + props.lowestfare + "₺"}
+                </Text>
               </View>
             </View>
           ) : null}

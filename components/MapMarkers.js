@@ -1,12 +1,32 @@
 import React from "react";
 import { Marker } from "react-native-maps";
 import { View, Text, StyleSheet } from "react-native";
-
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
-import { darkgrey, lime } from "../constants/colors";
+import {
+  darkgrey,
+  lime,
+  alert,
+  ok,
+  warning,
+  darkgrey40,
+  white,
+} from "../constants/colors";
 
 export default function MapMarkers(props) {
-  // const [selected, isSelected] = useState(false);
+  const markerColor = () => {
+    const occupancyRatio = props.occupancyRatio;
+
+    if (props.colorsDisabled) {
+      return markerSelected;
+    } else if (occupancyRatio >= 0.9) {
+      return styles.markerAlert;
+    } else if (occupancyRatio >= 0.8) {
+      return styles.markerWarning;
+    } else {
+      return styles.markerOk;
+    }
+  };
 
   return (
     <Marker
@@ -26,7 +46,6 @@ export default function MapMarkers(props) {
             }
       }
       onPress={() => {
-        console.log(props.index);
         props.setSelectedIndex(props.index);
       }}
     >
@@ -34,7 +53,9 @@ export default function MapMarkers(props) {
         style={
           props.index == props.selectedIndex
             ? styles.markerSelected
-            : styles.marker
+            : props.hasAgreement
+            ? markerColor()
+            : styles.markerDisabled
         }
       >
         {props.hasAgreement ? (
@@ -55,7 +76,11 @@ export default function MapMarkers(props) {
                 : styles.text
             }
           >
-            -
+            <Ionicons
+              name="caret-down"
+              size={12}
+              color={props.index == props.selectedIndex ? lime : white}
+            />
           </Text>
         )}
       </View>
@@ -64,22 +89,37 @@ export default function MapMarkers(props) {
 }
 
 const styles = StyleSheet.create({
-  marker: {
-    backgroundColor: "#000",
-    padding: 5,
-    borderRadius: 5,
-  },
   text: {
-    color: "#fff",
+    color: white,
     fontWeight: "bold",
   },
   markerSelected: {
-    backgroundColor: lime,
+    backgroundColor: darkgrey,
     padding: 5,
     borderRadius: 5,
   },
   textSelected: {
-    color: darkgrey,
+    color: lime,
     fontWeight: "bold",
+  },
+  markerDisabled: {
+    backgroundColor: darkgrey40,
+    padding: 5,
+    borderRadius: 5,
+  },
+  markerAlert: {
+    backgroundColor: alert,
+    padding: 5,
+    borderRadius: 5,
+  },
+  markerWarning: {
+    backgroundColor: warning,
+    padding: 5,
+    borderRadius: 5,
+  },
+  markerOk: {
+    backgroundColor: ok,
+    padding: 5,
+    borderRadius: 5,
   },
 });

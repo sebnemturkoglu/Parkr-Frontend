@@ -1,34 +1,42 @@
 import * as React from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
-import {  darkgrey60, lime, lime60, white } from "../constants/colors";
+import { darkgrey60, lime, lime60, white } from "../constants/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Map from "./Map";
 
-export default function ParkingPlaceCard( props ) {
-
-  return(
+export default function ParkingPlaceCard(props) {
+  return (
     <TouchableOpacity activeOpacity={0.7} onPress={props.onPress}>
-    <View style={styles.container}>
-      <View style={styles.textG}>
-        <View style={styles.headerGroup}>
-          <View style={styles.headerGroupLeft}>
-            <Text style={styles.textHeader}>{props.name}</Text>
-            <Text style={styles.textBody}>{props.distance} km</Text>
+      <View style={styles.container}>
+        <View style={styles.textG}>
+          <View style={styles.headerGroup}>
+            <View style={styles.headerGroupLeft}>
+              <Text style={styles.textHeader}>{props.name}</Text>
+              <Text style={styles.textBody}>
+                {props.distance ? props.distance + "km" : ""}
+              </Text>
+            </View>
+            <View>
+              <Ionicons name="chevron-forward" size={20} color={white} />
+            </View>
           </View>
-          <View>
-            <Ionicons name="chevron-forward" size={20} color={white} />
-          </View>
+          <Text style={styles.textBody}>
+            {props.numOfRatings === 0 ? "" : props.rating + "/5 points"}
+          </Text>
         </View>
-        <Text style={styles.textBody}>{props.rating}/5 points</Text>
+        <View style={styles.mapContainer}>
+          <Map
+            scrollDisabled={true}
+            fixedMarker={true}
+            marker={props.coordinates}
+            hasAgreement={props.hasAgreement}
+            availability={props.availability}
+          />
+        </View>
       </View>
-      <View style={styles.mapContainer}>
-        <Map scrollDisabled={true} fixedMarker={true} marker={props.coordinates} />
-      </View>
-    </View>
-  </TouchableOpacity>
-  )
+    </TouchableOpacity>
+  );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -37,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: darkgrey60,
     borderRadius: 26,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   headerGroup: {
     flexDirection: "row",
@@ -50,7 +58,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   textG: {
-    width: "90%"
+    width: "90%",
   },
   textHeader: {
     fontSize: 16,

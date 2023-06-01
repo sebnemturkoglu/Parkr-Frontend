@@ -17,14 +17,21 @@ import {
   mapViewScreenName,
   placeDetailsScreenName,
 } from "../constants/screenNames";
-import { getSearchPlaces } from "../actions/places";
+import { getSearchPlaces, getNearbyPlaces } from "../actions/places";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { makeSearchFalse } from "../actions/places";
 
 export default function MapScreen({ navigation, route }) {
   const dispatch = useDispatch();
-  const [location, setLocation] = useState(null);
   const ref = useRef();
+  const [searchLatitude, setSearchLatitude] = useState(null);
+  const [searchLongitude, setSearchLongitude] = useState(null);
+
+  const places = useSelector((state) => state.places);
+  const searchData = useSelector((state) => state.searchPlaces);
+  // const refresh = useSelector((state) => state.refresh);
+
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const handleSearch = (latitude, longitude) => {
     dispatch(getSearchPlaces({ latitude, longitude }));
@@ -41,24 +48,37 @@ export default function MapScreen({ navigation, route }) {
       let loc = await Location.getCurrentPositionAsync({}).then((locVal) => {
         let latitude = locVal.coords.latitude;
         let longitude = locVal.coords.longitude;
-        console.log("loca values", { latitude, longitude });
         dispatch(getNearbyPlaces({ latitude, longitude }));
       });
-      setLocation(loc);
     })();
-  }, [location]);
+  }, []);
 
-  const places = useSelector((state) => state.places);
-  const searchData = useSelector((state) => state.searchPlaces);
-
-  const [refreshing, setRefreshing] = React.useState(false);
-
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = async () => {
     setRefreshing(true);
+    // dispatch({ type: "REFRESH" });
+
+    if (searchData.isSearch) {
+      handleSearch(searchLatitude, searchLongitude);
+    } else {
+      (async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
+
+        let loc = await Location.getCurrentPositionAsync({}).then((locVal) => {
+          let latitude = locVal.coords.latitude;
+          let longitude = locVal.coords.longitude;
+          dispatch(getNearbyPlaces({ latitude, longitude }));
+        });
+      })();
+    }
+
     setTimeout(() => {
       setRefreshing(false);
-    }, 2000);
-  }, []);
+    }, 700);
+  };
 
   return (
     <View style={styles.container}>
@@ -92,6 +112,8 @@ export default function MapScreen({ navigation, route }) {
           }}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
+            setSearchLatitude(details.geometry.location.lat);
+            setSearchLongitude(details.geometry.location.lng);
             console.log(
               "Searched place:",
               details.geometry.location.lat,
@@ -147,7 +169,9 @@ export default function MapScreen({ navigation, route }) {
                     capacity={item.capacity}
                     occupancy={item.occupancy}
                     rating={item.rating}
-                    lowestfare={item.lowestfare}
+                    lowestfare={item.lowestFare}
+                    numOfRatings={item.numOfRatings}
+                    id={item.placeID}
                     distance={item.distance}
                     hasAgreement={item.hasAggreement}
                     onPress={() => {
@@ -170,8 +194,11 @@ export default function MapScreen({ navigation, route }) {
                     capacity={item.capacity}
                     occupancy={item.occupancy}
                     rating={item.rating}
-                    lowestfare={item.lowestfare}
+                    lowestfare={item.lowestFare}
+                    numOfRatings={item.numOfRatings}
+                    hasAgreement={item.hasAggreement}
                     distance={item.distance}
+                    id={item.placeID}
                     onPress={() =>
                       navigation.navigate({
                         name: placeDetailsScreenName,
@@ -191,7 +218,13 @@ export default function MapScreen({ navigation, route }) {
           color={darkgrey}
           label="Map View"
           style={styles.fab}
-          onPress={() => navigation.navigate(mapViewScreenName)}
+          onPress={() => {
+            navigation.navigate({
+              name: mapViewScreenName,
+              params: { region: { searchLatitude, searchLongitude } },
+              merge: true,
+            });
+          }}
         />
       </View>
     </View>
@@ -207,6 +240,7 @@ const styles = StyleSheet.create({
     flex: 0,
     paddingVertical: 30,
     paddingHorizontal: 15,
+    backgroundColor: darkgrey,
   },
   searchbar: {
     marginVertical: 30,

@@ -1,15 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { FAB } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { getPlaceDetails } from "../actions/places";
+import { getRoutes } from "../actions/routes";
 import Map from "../components/Map";
 import { darkgrey, lime, lime60, white } from "../constants/colors";
 import { mapDirecrtionsScreenName } from "../constants/screenNames";
-import { getPlaceDetails } from "../actions/places";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { getRoutes } from "../actions/routes";
 
 export default function PlaceDetailsScreen({ navigation, route }) {
   const dispatch = useDispatch();
@@ -24,10 +23,16 @@ export default function PlaceDetailsScreen({ navigation, route }) {
   }, []);
 
   const placeDetails = useSelector((state) => state.placeDetails);
+  const routeInfo = useSelector((state) => state.route);
   console.log("place details", placeDetails);
+  console.log("marker", placeDetails.coordinates);
+
+  const [routeLoading, setRouteLoading] = useState(false);
 
   const onClickNavigate = async () => {
-    console.log("clicked");
+    console.log("info", routeInfo);
+    setRouteLoading(true);
+
     let loc = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Low,
     }).then((locVal) => {
@@ -43,7 +48,11 @@ export default function PlaceDetailsScreen({ navigation, route }) {
         })
       );
 
-      navigation.navigate(mapDirecrtionsScreenName);
+      navigation.navigate({
+        name: mapDirecrtionsScreenName,
+        params: { marker: placeDetails.coordinates },
+        merge: true,
+      });
     });
   };
 
@@ -73,7 +82,11 @@ export default function PlaceDetailsScreen({ navigation, route }) {
             />
           </View>
           <Text style={styles.header}>{placeDetails.name}</Text>
-          <Text style={styles.ratingText}>{placeDetails.rating}/5 points</Text>
+          <Text style={styles.ratingText}>
+            {placeDetails.numOfRatings === 0
+              ? "Not rated"
+              : placeDetails.rating + "/5 points"}
+          </Text>
           {placeDetails.hasAggreement ? (
             <View style={styles.iconGroupContainer}>
               <View style={styles.iconGroup}>
@@ -85,16 +98,19 @@ export default function PlaceDetailsScreen({ navigation, route }) {
               <View style={styles.iconGroup}>
                 <Ionicons name="logo-usd" size={16} color={white} />
                 <Text style={styles.iconText}>
-                  from{" "}
                   {placeDetails.fares
-                    ? placeDetails.lowestFare + "₺"
+                    ? placeDetails.lowestFare === 0
+                      ? "Free"
+                      : "from " + placeDetails.lowestFare + "₺"
                     : "fare information missing"}
                 </Text>
               </View>
             </View>
           ) : null}
           <View style={styles.faresGroup}>
-            <Text style={styles.faresHeader}>Fares</Text>
+            {placeDetails.lowestFare === 0 ? null : (
+              <Text style={styles.faresHeader}>Fares</Text>
+            )}
             {placeDetails.hasAggreement ? (
               placeDetails.fares ? (
                 Object.keys(placeDetails.fares).map((field, index) => (
@@ -114,7 +130,10 @@ export default function PlaceDetailsScreen({ navigation, route }) {
               )
             ) : (
               <View style={styles.fareLineGroup}>
-                <Text style={styles.textFares}>Does not have agreement.</Text>
+                <Text style={styles.textFares}>
+                  This establishment currently does not have agreement with
+                  Parkr.
+                </Text>
               </View>
             )}
           </View>
@@ -136,6 +155,7 @@ export default function PlaceDetailsScreen({ navigation, route }) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: darkgrey,
     width: "100%",
     height: "100%",
@@ -218,5 +238,12 @@ const styles = StyleSheet.create({
     top: 0,
     borderRadius: 32,
     backgroundColor: "#1F1F1F",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    // Add other styles as needed
   },
 });

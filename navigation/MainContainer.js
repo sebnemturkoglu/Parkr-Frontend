@@ -2,15 +2,21 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { darkgrey, white } from '../constants/colors';
-import { homeScreenName, profileStackName, ticketsStackName, mapStackName } from "../constants/screenNames";
-
+import { darkgrey, white } from "../constants/colors";
+import {
+  homeScreenName,
+  profileStackName,
+  ticketsStackName,
+  mapStackName,
+  homeStackName,
+} from "../constants/screenNames";
 
 // screens
 import HomeScreen from "../screens/HomeScreen";
 import ProfileStack from "./ProfileStack";
 import MapStack from "./MapStack";
 import TicketStack from "./TicketStack";
+import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +30,7 @@ export default function MainContainer() {
             let iconName;
             let routeName = route.name;
 
-            if (routeName === homeScreenName) {
+            if (routeName === homeStackName) {
               iconName = focused ? "home" : "home-outline";
             } else if (routeName === profileStackName) {
               iconName = focused ? "person-circle" : "person-circle-outline";
@@ -44,7 +50,7 @@ export default function MainContainer() {
           tabBarActiveTintColor: white,
         })}
       >
-        <Tab.Screen name={homeScreenName} component={HomeScreen} />
+        <Tab.Screen name={homeStackName} component={HomeStack} />
         <Tab.Screen name={mapStackName} component={MapStack} />
         <Tab.Screen name={ticketsStackName} component={TicketStack} />
         <Tab.Screen name={profileStackName} component={ProfileStack} />

@@ -2,26 +2,29 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { darkgrey, white, lime, lime60 } from "../constants/colors";
 import { FAB } from "react-native-paper";
+import { useSelector } from "react-redux";
 
-const propTicket = {
-  name: "Bilka Park",
-  date: "11.11.2022",
-  time: "10.23 - 11.42",
-  fee: "20₺",
-  rating: "4.7",
-  paymentViaApp: true,
-  userRated: true,
-  userRating: "5",
+const formatTime = (time) => {
+  const date = new Date(time);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Note: Month starts from 0
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${day}.${month}.${year} ${hours}:${minutes}`;
 };
 
 export default function OldTicketDetailsScreen({ navigation, route }) {
-  const [ticket, setTicket] = useState(propTicket);
-
   const onBackButtonClick = () => {
     navigation.goBack();
   };
 
-  id = 0;
+  const pastParkingData = useSelector((state) => state.pastParkingData);
+
+  const [ticket, setTicket] = useState(pastParkingData[route.params?.index]);
+
+  console.log(ticket);
 
   return (
     <View style={styles.container}>
@@ -34,30 +37,27 @@ export default function OldTicketDetailsScreen({ navigation, route }) {
         onPress={onBackButtonClick}
       />
       <Text style={styles.header}>{ticket.name} Ticket</Text>
-      <Text style={styles.ratingText}>{ticket.rating}/5 points</Text>
       <View style={styles.faresGroup}>
         <Text style={styles.faresHeader}>Details</Text>
         <View style={styles.fareLineGroup}>
-          <Text style={styles.textFares}>Date</Text>
-          <Text style={styles.textFares}>{ticket.date}</Text>
+          <Text style={styles.textFares}>Start Date and Time:</Text>
+          <Text style={styles.textFares}>{formatTime(ticket.startTime)}</Text>
         </View>
         <View style={styles.fareLineGroup}>
-          <Text style={styles.textFares}>Time period</Text>
-          <Text style={styles.textFares}>{ticket.time}</Text>
+          <Text style={styles.textFares}>End Date and Time</Text>
+          <Text style={styles.textFares}>{formatTime(ticket.endTime)}</Text>
         </View>
         <View style={styles.fareLineGroup}>
-          <Text style={styles.textFares}>Fee</Text>
-          <Text style={styles.textFares}>{ticket.fee}</Text>
+          <Text style={styles.textFares}>Fee:</Text>
+          <Text style={styles.textFares}>{ticket.fee}₺</Text>
         </View>
         <View style={styles.fareLineGroup}>
-          <Text style={styles.textFares}>Payment type</Text>
-          <Text style={styles.textFares}>
-            {ticket.paymentViaApp ? "Online" : "Manual"}
-          </Text>
+          <Text style={styles.textFares}>Payment:</Text>
+          <Text style={styles.textFares}>{ticket.status}</Text>
         </View>
       </View>
       <View style={styles.fabContainer}>
-        {ticket.userRated ? (
+        {/* {ticket.userRated ? (
           <View style={styles.faresGroup}>
             <View style={styles.fareLineGroup}>
               <Text style={styles.textFares}>You rated:</Text>
@@ -72,7 +72,7 @@ export default function OldTicketDetailsScreen({ navigation, route }) {
             style={styles.fab}
             //   onPress={() => navigation.navigate(mapDirecrtionsScreenName)}
           />
-        )}
+        )} */}
       </View>
     </View>
   );

@@ -5,8 +5,8 @@ import * as Location from "expo-location";
 import MapView from "react-native-maps";
 import { Polyline } from "react-native-maps";
 import MapMarkers from "./MapMarkers";
-import MapViewDirections from "react-native-maps-directions";
 import { darkgrey, lime } from "../constants/colors";
+import { useSelector } from "react-redux";
 
 const LOCATION_TASK_NAME = "LOCATION_TASK_NAME";
 let foregroundSubscription = null;
@@ -30,6 +30,7 @@ TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
 export default function Map(props) {
   // Define position state: {latitude: number, longitude: number}
   const [position, setPosition] = useState(null);
+  // const routePolyline = useSelector((state) => state.route);
 
   // Request permissions right after starting the app
   useEffect(() => {
@@ -121,7 +122,7 @@ export default function Map(props) {
     }
   };
 
-  // console.log("coordinates in map", props.coordinates);
+  // console.log("coordinates in map", routePolyline[0].polyline);
 
   const GOOGLE_MAPS_APIKEY = "AIzaSyAgu7UnTtb-9hS2Aspkv6lp_n4Xu6Qm7ks";
 
@@ -129,11 +130,19 @@ export default function Map(props) {
     <View style={styles.container}>
       <MapView
         scrollEnabled={props.scrollDisabled ? false : true}
+        zoomEnabled={props.scrollDisabled ? false : true}
         region={
           props.fixedMarker
             ? {
                 latitude: props.marker.latitude,
                 longitude: props.marker.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+              }
+            : props.region
+            ? {
+                latitude: props.region.searchLatitude,
+                longitude: props.region.searchLongitude,
                 latitudeDelta: 0.005,
                 longitudeDelta: 0.005,
               }
@@ -159,6 +168,7 @@ export default function Map(props) {
             hasAgreement={props.hasAgreement}
             availability={props.availability}
             selected={true}
+            colorsDisabled={true}
           />
         ) : props.multipleMarkers ? (
           props.places.map((item, index) => {
@@ -170,6 +180,9 @@ export default function Map(props) {
                 hasAgreement={item.hasAggreement}
                 availability={
                   item.hasAggreement ? item.capacity - item.occupancy : -1
+                }
+                occupancyRatio={
+                  item.hasAggreement ? item.occupancy / item.capacity : -1
                 }
                 setSelectedIndex={props.setSelectedIndex}
                 selectedIndex={props.selectedIndex}

@@ -1,6 +1,13 @@
 import React, { useContext, useState } from "react";
 import { View, StyleSheet, Image, Text, TouchableOpacity } from "react-native";
-import { darkgrey, darkgrey40, lime60, white, lime } from "../constants/colors";
+import {
+  darkgrey,
+  darkgrey40,
+  lime60,
+  white,
+  lime,
+  alert,
+} from "../constants/colors";
 import logo from "../assets/logo.png";
 import { TextInput } from "react-native-paper";
 import { useDispatch } from "react-redux";
@@ -166,7 +173,7 @@ const LoginPage = (props) => {
         />
         <Text style={styles.textColored}>Forgot your password?</Text>
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Register</Text>
+          <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -245,7 +252,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   alert: {
-    color: "#e42218",
+    color: alert,
     fontSize: "14",
     letterSpacing: "0.3%",
   },

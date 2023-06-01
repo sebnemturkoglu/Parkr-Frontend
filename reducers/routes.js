@@ -1,10 +1,9 @@
-let initialState = [];
+let initialState = { loaded: false, data: [] };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case "GET_ROUTES":
-      console.log("payload routes:", action.payload);
-      return action.payload;
+      return { ...state, loaded: true, data: action.payload };
     default:
       return state;
   }

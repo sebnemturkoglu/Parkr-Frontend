@@ -1,7 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -31,10 +37,8 @@ export default function HomeScreen() {
       }).then((locVal) => {
         let latitude = locVal.coords.latitude;
         let longitude = locVal.coords.longitude;
-        console.log("loca values", { latitude, longitude });
         dispatch(getNearbyPlaces({ latitude, longitude }));
       });
-      setLocation(loc);
     })();
 
     dispatch(getRecentPlaces());
@@ -42,13 +46,14 @@ export default function HomeScreen() {
 
   const places = useSelector((state) => state.places);
   const recentPlaces = useSelector((state) => state.recentPlaces);
+  const loaded = useSelector((state) => state.loaded);
 
   const handleSearch = (latitude, longitude) => {
     dispatch(getSearchPlaces({ latitude, longitude }));
     navigation.navigate(mapStackName);
   };
 
-  return (
+  return loaded.nearbyLoaded && loaded.recentLoaded ? (
     <View style={styles.container}>
       <View style={styles.searchbar}>
         <Text style={styles.header}>Find your parking spot</Text>
@@ -60,12 +65,6 @@ export default function HomeScreen() {
             rankby: "distance",
           }}
           onPress={(data, details = null) => {
-            // 'details' is provided when fetchDetails = true
-            console.log(
-              "Searched place:",
-              details.geometry.location.lat,
-              details.geometry.location.lng
-            );
             handleSearch(
               details.geometry.location.lat,
               details.geometry.location.lng
@@ -100,6 +99,11 @@ export default function HomeScreen() {
                   lowestfare={item.lowestFare}
                   distance={item.distance}
                   coordinates={item.coordinates}
+                  numOfRatings={item.numOfRatings}
+                  hasAgreement={item.hasAggreement}
+                  availability={
+                    item.hasAggreement ? item.capacity - item.occupancy : -1
+                  }
                   onPress={() => {
                     navigation.navigate({
                       name: placeDetailsScreenName,
@@ -126,9 +130,11 @@ export default function HomeScreen() {
                     capacity={item.capacity}
                     occupancy={item.occupancy}
                     rating={item.rating}
-                    lowestfare={item.fares[0].fare}
-                    distance={item.distance}
+                    lowestfare={item.lowestFare}
                     coordinates={item.coordinates}
+                    hasAgreement={true}
+                    numOfRatings={item.numOfRatings}
+                    availability={item.capacity - item.occupancy}
                     onPress={() => {
                       navigation.navigate({
                         name: placeDetailsScreenName,
@@ -148,6 +154,10 @@ export default function HomeScreen() {
         )}
       </View>
     </View>
+  ) : (
+    <View style={styles.loadContainer}>
+      <ActivityIndicator size="large" color={lime} />
+    </View>
   );
 }
 
@@ -158,6 +168,13 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "100%",
     flex: 1,
+  },
+  loadContainer: {
+    backgroundColor: darkgrey,
+    height: "100%",
+    width: "100%",
+    flex: 1,
+    justifyContent: "center",
   },
   searchbar: {
     marginTop: 30,

@@ -1,88 +1,94 @@
 import axios from "axios";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
-const API = axios.create({ baseURL: "https://parkr-yxog6oqeqq-ew.a.run.app"});
-
+const API = axios.create({ baseURL: "https://parkr-yxog6oqeqq-ew.a.run.app" });
 
 export async function getPastParking() {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await API.get("/users/past-parking", {headers});
+    const response = await API.get("/users/past-parking", { headers });
     return response.data;
-
   } catch (error) {
     console.log(error.response.data);
   }
 }
 
 export async function getCurrentParking() {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await API.get("/users/current-parking", {headers});
+    const response = await API.get("/users/current-parking", { headers });
     return response.data;
-
   } catch (error) {
     console.log(error.response.data);
   }
 }
 
 export async function getVehicles() {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await API.get("/users/cars", {headers});
+    const response = await API.get("/users/cars", { headers });
     return response.data;
-
   } catch (error) {
     console.log(error.response.data);
   }
 }
 
 export async function addVehicle(data) {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await API.post("/users/add-vehicle", data, {headers});
+    const response = await API.post("/users/add-vehicle", data, { headers });
     return response.data;
-
   } catch (error) {
     console.log(error.response.data);
   }
 }
 
 export async function deleteVehicle(id) {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await API.delete(`/users/cars/${id}`, {headers});
+    const response = await API.delete(`/users/cars/${id}`, { headers });
     return response.data;
-
   } catch (error) {
     console.log(error.response.data);
   }
 }
 
 export async function editVehicle(data) {
-  const token = await SecureStore.getItemAsync('token');
+  const token = await SecureStore.getItemAsync("token");
   const headers = {
     Authorization: `Bearer ${token}`,
   };
   try {
-    const response = await API.put("/users/edit-vehicle", data, {headers});
+    const response = await API.put("/users/edit-vehicle", data, { headers });
     return response.data;
+  } catch (error) {
+    console.log(error.response.data);
+  }
+}
 
+export async function makePayment(data) {
+  const token = await SecureStore.getItemAsync("token");
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const response = await API.post("/users/make-payment", data, { headers });
+    return response.data;
   } catch (error) {
     console.log(error.response.data);
   }

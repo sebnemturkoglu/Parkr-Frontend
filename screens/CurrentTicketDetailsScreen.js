@@ -2,23 +2,34 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { darkgrey, white, lime, lime60 } from "../constants/colors";
 import { FAB } from "react-native-paper";
+import { useSelector } from "react-redux";
+import { paymentScreenName } from "../constants/screenNames";
 
-const propTicket = {
-  name: "Bilka Park",
-  date: "11.11.2022",
-  time: "10.23",
-  fee: "20₺",
-  rating: "4.7",
+const formatDate = (time) => {
+  const date = new Date(time);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Note: Month starts from 0
+  const year = date.getFullYear();
+
+  return `${day}.${month}.${year}`;
+};
+
+const formatTime = (time) => {
+  const date = new Date(time);
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${hours}:${minutes}`;
 };
 
 export default function CurrentTicketDetailsScreen({ navigation, route }) {
-  const [ticket, setTicket] = useState(propTicket);
+  const currentParkingData = useSelector((state) => state.currentParkingData);
+
+  const [ticket, setTicket] = useState(currentParkingData[route.params?.index]);
 
   const onBackButtonClick = () => {
     navigation.goBack();
   };
-
-  id = 0;
 
   return (
     <View style={styles.container}>
@@ -31,31 +42,40 @@ export default function CurrentTicketDetailsScreen({ navigation, route }) {
         onPress={onBackButtonClick}
       />
       <Text style={styles.header}>{ticket.name} Ticket</Text>
-      <Text style={styles.ratingText}>{ticket.rating}/5 points</Text>
       <View style={styles.faresGroup}>
-        <Text style={styles.faresHeader}>Details</Text>
+        <Text style={styles.faresHeader}>Details:</Text>
         <View style={styles.fareLineGroup}>
-          <Text style={styles.textFares}>Date</Text>
-          <Text style={styles.textFares}>{ticket.date}</Text>
+          <Text style={styles.textFares}>Date:</Text>
+          <Text style={styles.textFares}>{formatDate(ticket.startTime)}</Text>
         </View>
         <View style={styles.fareLineGroup}>
-          <Text style={styles.textFares}>Parking started at</Text>
-          <Text style={styles.textFares}>{ticket.time}</Text>
+          <Text style={styles.textFares}>Parking started at:</Text>
+          <Text style={styles.textFares}>{formatTime(ticket.startTime)}</Text>
         </View>
         <View style={styles.fareLineGroup}>
           <Text style={styles.textFares}>Current fee</Text>
-          <Text style={styles.textFares}>{ticket.fee}</Text>
+          <Text style={styles.textFares}>
+            {ticket.fee - ticket.paidAmount}₺
+          </Text>
         </View>
       </View>
-      <View style={styles.fabContainer}>
-      <FAB
+      {ticket.fee == ticket.paidAmount ? null : (
+        <View style={styles.fabContainer}>
+          <FAB
             size="small"
             color={darkgrey}
             label="Pay via Parkr"
             style={styles.fab}
-            //   onPress={() => navigation.navigate(mapDirecrtionsScreenName)}
+            onPress={() => {
+              navigation.navigate({
+                name: paymentScreenName,
+                params: { carID: ticket.carID },
+                merge: true,
+              });
+            }}
           />
-      </View>
+        </View>
+      )}
     </View>
   );
 }

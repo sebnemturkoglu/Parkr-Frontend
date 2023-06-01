@@ -20,7 +20,7 @@ const DismissKeyboard = ({ children }) => (
   </TouchableWithoutFeedback>
 );
 
-const MapViewScreen = ({ navigation }) => {
+const MapViewScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const [location, setLocation] = useState(null);
 
@@ -82,6 +82,7 @@ const MapViewScreen = ({ navigation }) => {
               places={searchData.data}
               setSelectedIndex={setSelectedIndex}
               selectedIndex={selectedIndex}
+              region={route.params?.region}
             />
             <View style={styles.cardContainer}>
               <ParkCard

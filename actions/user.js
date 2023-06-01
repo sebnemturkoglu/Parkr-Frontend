@@ -60,3 +60,14 @@ export const deleteVehicle = (req) => async (dispatch) => {
     console.error("deleteVehicle Error", error);
   }
 };
+
+export const makePayment = (req) => async (dispatch) => {
+  console.log("makePayment", req);
+  try {
+    const res = await API.makePayment(req);
+    console.log(res);
+    dispatch({ type: "MAKE_PAYMENT" });
+  } catch (error) {
+    console.error("makePayment Error", error);
+  }
+};

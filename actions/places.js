@@ -3,17 +3,19 @@ import * as API from "../api/places";
 export const getNearbyPlaces = (req) => async (dispatch) => {
   try {
     const { data } = await API.getNearbyPlaces(req);
-    console.log("action", data);
+    console.log("Get Nearby Places Action");
     dispatch({ type: "GET_NEARBY_PLACES", payload: data });
   } catch (error) {
     console.error("getNearbyError", error, req);
   }
+
+  dispatch({ type: "NEARBY_LOADED" });
 };
 
 export const getSearchPlaces = (req) => async (dispatch) => {
   try {
     const { data } = await API.getNearbyPlaces(req);
-    console.log("action getSearchPlaces", data);
+    console.log("Get Search Places Action");
     dispatch({ type: "GET_PLACES_NEAR_SEARCH_POINT", payload: data });
   } catch (error) {
     console.error("getSearchPlaces Error", error, req);
@@ -37,6 +39,8 @@ export const getRecentPlaces = () => async (dispatch) => {
   } catch (error) {
     console.error("getRecentPlaces Error", error, req);
   }
+
+  dispatch({ type: "RECENT_LOADED" });
 };
 
 export const makeSearchFalse = () => async (dispatch) => {

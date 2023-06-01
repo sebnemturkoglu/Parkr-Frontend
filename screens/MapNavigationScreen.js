@@ -1,11 +1,11 @@
 import Polyline from "@mapbox/polyline";
 import * as React from "react";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { useSelector } from "react-redux";
 import BackButton from "../components/BackButton";
 import Map from "../components/Map";
-import { darkgrey60, lime, lime60, white } from "../constants/colors";
+import { darkgrey60, lime, lime60, white, darkgrey } from "../constants/colors";
 import { useEffect } from "react";
 
 const timeData = {
@@ -17,13 +17,11 @@ const timeData = {
   arrivalTime: "9.50",
 };
 
-const MapDirectionsScreen = ({ navigation }) => {
+const MapDirectionsScreen = ({ navigation, route }) => {
   const [isFull, setIsFull] = useState(false);
   const [coords, setCoords] = React.useState([]);
 
-  const origin = { latitude: 39.79548, longitude: 32.712426 };
-  const destination = { latitude: 39.866797, longitude: 32.758669 };
-  const route = useSelector((state) => state.route);
+  const routeInfo = useSelector((state) => state.route);
 
   // React.useEffect(() => {
   //   setTimeout(() => {
@@ -32,10 +30,8 @@ const MapDirectionsScreen = ({ navigation }) => {
   // });
 
   useEffect(() => {
-    console.log("route", route);
-
-    if (route != null && route.length !== 0) {
-      let points = Polyline.decode(route[0].polyline);
+    if (routeInfo != null && routeInfo.loaded) {
+      let points = Polyline.decode(routeInfo.data[0].polyline);
       let coordinates = points.map((point, index) => {
         return {
           latitude: point[0],
@@ -46,7 +42,7 @@ const MapDirectionsScreen = ({ navigation }) => {
       setCoords(coordinates);
       console.log(coords);
     }
-  }, [route]);
+  }, [routeInfo]);
 
   const onBackButtonClick = () => {
     Alert.alert("Quit Route", "Do you want to quit the directions page?", [
@@ -58,23 +54,60 @@ const MapDirectionsScreen = ({ navigation }) => {
     ]);
   };
 
-  return (
+  function convertSecondsToMinutes(timeString) {
+    const seconds = parseInt(timeString, 10);
+    const minutes = Math.floor(seconds / 60); // or Math.round(seconds / 60) for rounding to the nearest integer
+
+    return minutes;
+  }
+
+  function getCurrentTimeAndAddMinutes(minutesToAdd) {
+    const currentTime = new Date();
+
+    // Convert the minutesToAdd value to a number and add it to the current minutes
+    const updatedMinutes = currentTime.getMinutes() + Number(minutesToAdd);
+
+    // Create a new Date object with the updated minutes
+    const updatedTime = new Date(currentTime.getTime());
+    updatedTime.setMinutes(updatedMinutes);
+
+    // Get the updated hour and minute values
+    const updatedHours = String(updatedTime.getHours()).padStart(2, "0");
+    const updatedMinutesString = String(updatedTime.getMinutes()).padStart(
+      2,
+      "0"
+    );
+
+    // Combine the updated hours and minutes with a dot separator
+    const updatedTimeString = `${updatedHours}.${updatedMinutesString}`;
+
+    return updatedTimeString;
+  }
+
+  return routeInfo.loaded ? (
     <View style={styles.container}>
       <Map
-        origin={origin}
-        destination={destination}
         directions={true}
         coordinates={coords}
+        fixedMarker={true}
+        marker={route.params?.marker}
       />
       <View style={styles.textGroupContainer}>
         <View style={styles.textGroup}>
-          <Text style={styles.mainText}>{timeData.reaminingTime}</Text>
+          <Text style={styles.mainText}>
+            {convertSecondsToMinutes(routeInfo.data[0].duration)} min
+          </Text>
           <Text style={styles.sideText}>
-            {timeData.ocupancy} / {timeData.capacity}
+            {routeInfo.data.ocupancy
+              ? routeInfo.data[0].ocupancy + "/" + routeInfo.data.capacity
+              : null}
           </Text>
         </View>
         <Text style={styles.bottomText}>
-          {timeData.remainingDistance} • {timeData.arrivalTime}
+          {routeInfo.data[0].distance.toFixed(1)} km •{" "}
+          {getCurrentTimeAndAddMinutes(
+            convertSecondsToMinutes(routeInfo.data[0].duration)
+          )}
         </Text>
       </View>
       {isFull ? (
@@ -88,6 +121,12 @@ const MapDirectionsScreen = ({ navigation }) => {
         </View>
       ) : null}
       <BackButton onClick={onBackButtonClick} />
+    </View>
+  ) : (
+    <View style={styles.loadContainer}>
+      <View style={styles.loadingOverlay}>
+        <ActivityIndicator size="large" color={lime} />
+      </View>
     </View>
   );
 };
@@ -146,6 +185,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: white,
     textAlign: "center",
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    // Add other styles as needed
+  },
+  loadContainer: {
+    flex: 1,
+    backgroundColor: darkgrey,
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
   },
 });
 
